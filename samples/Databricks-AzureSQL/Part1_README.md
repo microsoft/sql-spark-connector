@@ -84,7 +84,7 @@ except ValueError as error :
     print("Connector write failed", error)
 ```
 
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/notebook1-writetoMI.png))
+![enter image description here](media/notebook1-writetoMI.png))
 
 > It is recommended to store SQL MI credentials as secrets either in [Databricks scoped secrets or in Azure Key Vault](https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secret-scopes) to enable sharing the notebooks with multiple users without exposing the credentials displayed. Secrets retrieved in the notebook are always redacted when displayed assuring the SQL MI credentials are
 > never exposed to users.
