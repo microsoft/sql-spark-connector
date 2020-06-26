@@ -74,8 +74,8 @@ except ValueError as error :
     print("Connector Write failed", error)
 ```
 The records are now available in dbo.FactCovid19 in SQL MI
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/ssmsfactexplorer.png)
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/ssmsfactselect.png)
+![enter image description here](media/ssmsfactexplorer.png)
+![enter image description here](media/ssmsfactselect.png)
 
 The fact data can be visualized by reporting or data visualization tools like [Power BI](https://powerbi.microsoft.com/en-us/), consumed by APIs in downstream applications or even visualized in the same Databricks notebook as shown below.
 
