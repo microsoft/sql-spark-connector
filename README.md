@@ -125,6 +125,8 @@ jdbcDF = spark.read \
         .option("password", password).load()
 ```
 
+Please check the [sample notebooks](samples) for examples.
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
