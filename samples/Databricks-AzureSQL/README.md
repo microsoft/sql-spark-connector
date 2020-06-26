@@ -1,3 +1,4 @@
+
 The objective of this solution is to demonstrate the integration between Azure Databricks and Azure SQL Managed Instance to deliver insights and data visualizations using a publicly available [COVID-19 dataset](https://azure.microsoft.com/en-au/services/open-datasets/catalog/ecdc-covid-19-cases/). While Azure Databricks provides the distributed computing power to process and transform complex datasets, Azure SQL Managed Instance acts as a recipient of the batch scored predictions and transformed data to serve it to business users. In doing so, the solution uses a publicly available COVID-19 dataset and runs a machine learning model in Databricks to predict the fatalities which are then written into a datamart in Azure SQL Managed Instance for visualization and reporting.
 
 > Note: Gradient Boosting Trees (GBT) Regression model has been used in
@@ -80,7 +81,7 @@ When creating the Databricks cluster, it is important to select the Databricks R
 ![enter image description here](media/installlibrary.png)
 ![enter image description here](media/installjar.png)
 
-**3. Prepare SQL MI Datamart:**<br>A sample BACPAC file `Covid19datamart.bacpac` is provided [here](https://github.com/mokabiru/databricks-azuresql-samples/tree/master/Spark_SQL_Connector/AzureSQLMI/SQLMI/bacpac) to import and create the datamart in SQL MI. Any existing data in Staging or Fact table needs to be deleted as the solution will insert a new dataset from the data lake. After importing the file from the GitHub repo to create the datamart in Azure SQL Managed Instance, run the following stored procedure on the imported datamart:
+**3. Prepare SQL MI Datamart:**<br>A sample BACPAC file `Covid19datamart.bacpac` is provided [here](SQLMI/bacpac) to import and create the datamart in SQL MI. Any existing data in Staging or Fact table needs to be deleted as the solution will insert a new dataset from the data lake. After importing the file from the GitHub repo to create the datamart in Azure SQL Managed Instance, run the following stored procedure on the imported datamart:
 ```sql
 EXEC sp_cleanuptables ‘all’
 ```
