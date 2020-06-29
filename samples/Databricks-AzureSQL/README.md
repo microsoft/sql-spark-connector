@@ -9,7 +9,7 @@ The objective of this solution is to demonstrate the integration between Azure D
 
 **Apache Spark Connector for SQL Server and Azure SQL**
 
-The [Spark connector for SQL Server and Azure SQL](https://docs.microsoft.com/en-us/azure/azure-sql/database/spark-connector) enables databases in Azure SQL Database, Azure SQL Managed Instance, and SQL Server to act as the input data source or output data sink for Spark jobs. The Spark connector is a high-performance connector that enables you to use  transactional data in big data analytics and persists results for ad-hoc queries or reporting.
+The Spark connector for SQL Server and Azure SQL enables databases in Azure SQL Database, Azure SQL Managed Instance, and SQL Server to act as the input data source or output data sink for Spark jobs. The Spark connector is a high-performance connector that enables you to use  transactional data in big data analytics and persists results for ad-hoc queries or reporting.
 
 Key features of this connector include:
 -   Support for all Spark bindings (Scala, Python, R).
