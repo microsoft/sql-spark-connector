@@ -1,4 +1,5 @@
-The objective of this solution is to showcase a use case to demonstrate the integration between Azure Databricks and Azure SQL Managed Instance to deliver insights and data visualizations using a publicly available COVID-19 dataset. While Azure Databricks provides the distributed computing power to process and transform complex datasets, Azure SQL Managed Instance acts as a recipient of the transformed dataset and serves it to business users. In doing so, the solution uses a publicly available COVID-19 dataset and runs a machine learning model in Databricks to predict the fatalities which are then written into a datamart in Azure SQL Managed Instance for visualization and reporting.
+
+The objective of this solution is to demonstrate the integration between Azure Databricks and Azure SQL Managed Instance to deliver insights and data visualizations using a publicly available [COVID-19 dataset](https://azure.microsoft.com/en-au/services/open-datasets/catalog/ecdc-covid-19-cases/). While Azure Databricks provides the distributed computing power to process and transform complex datasets, Azure SQL Managed Instance acts as a recipient of the batch scored predictions and transformed data to serve it to business users. In doing so, the solution uses a publicly available COVID-19 dataset and runs a machine learning model in Databricks to predict the fatalities which are then written into a datamart in Azure SQL Managed Instance for visualization and reporting.
 
 > Note: Gradient Boosting Trees (GBT) Regression model has been used in
 > the solution purely for demonstration purposes and by no means should
@@ -6,18 +7,22 @@ The objective of this solution is to showcase a use case to demonstrate the inte
 > predictions on the dataset used.
 
 
-**Azure SQL Spark Connector**
+**Apache Spark Connector for SQL Server and Azure SQL**
 
-The [Spark connector](https://docs.microsoft.com/en-us/azure/azure-sql/database/spark-connector) enables databases in Azure SQL Database, Azure SQL Managed Instance, and SQL Server to act as the input data source or output data sink for Spark jobs. The Spark connector supports Azure Active Directory (Azure AD) authentication to connect to Azure SQL Database and Azure SQL Managed Instance and it utilizes the Microsoft JDBC Driver for SQL Server to move data between Spark worker nodes and databases.
+The Spark connector for SQL Server and Azure SQL enables databases in Azure SQL Database, Azure SQL Managed Instance, and SQL Server to act as the input data source or output data sink for Spark jobs. The Spark connector is a high-performance connector that enables you to use  transactional data in big data analytics and persists results for ad-hoc queries or reporting.
 
-The connector can either be downloaded from the [azure-sqldb-spark GitHub repo](https://github.com/Azure/azure-sqldb-spark/tree/master/releases/azure-sqldb-spark-1.0.0) or imported into Azure Databricks using the Maven coordinate: `com.microsoft.azure:azure-sqldb-spark:1.0.2`
+Key features of this connector include:
+-   Support for all Spark bindings (Scala, Python, R).
+-   Basic authentication and Active Directory (AD) keytab support.
+-   Reordered DataFrame write support.
+-   Reliable connector support for single instance.
+
+The connector can either be downloaded from [this GitHub repo](https://github.com/microsoft/sql-spark-connector/releases/tag/v1.0).
 
 **Solution Architecture**
 
-The solution architecture shown below depicts the various phases of data flow along with a variety of data sources and data consumers involved.
-
-![Solution Architecture Image](https://github.com/mokabiru/databrickssqlmi/raw/master/media/Solution%20Architecture%20Numbered%20.jpg)
-
+The solution architecture below depicts the various phases of data flow along with a variety of data sources and data consumers involved. In this diagram, Azure SQL Database or Azure SQL Managed Instance can be interchangeably used as a storage / serving layer for datamart.
+![enter image description here](media/Solution%20ArchitectureAzureSQL.jpg)
 The solution comprises of the following parts as described in the data flow below (the sequence numbers are highlighted in the architecture diagram above)
 
  1. The solution extracts the COVID-19 public dataset available in a
@@ -60,16 +65,23 @@ Node specification: Standard_DS3_v2*
 3. **Azure Key Vault (Standard)** – to save secrets such as SQL Managed Instance login password
 
 The solution is divided into two parts in two Azure Databricks notebooks. Click on the links below to dive deeper into each part of the solution. <br>
-[**Part 1 walkthrough**](https://github.com/mokabiru/databrickssqlmi/blob/master/Part1_README.md): 
-Notebook 1 ([Covid19-DatabricksML-SQLMI](https://github.com/mokabiru/databrickssqlmi/blob/master/DatabricksNotebooks/Covid19-DatabricksML-SQLMI.dbc)) emphasizes on the machine learning model training and prediction that executes Steps 1-3 in the data flow described above.
+[**Part 1 walkthrough**](Part1_README.md): 
+[Notebook1 - DatabricksML-SQLMI-V1](DatabricksNotebooks/Notebook1%20-%20DatabricksML-SQLMI-V1.ipynb) emphasizes on the machine learning model training and batch scoring that executes Steps 1-3 in the data flow described above.
 
-[**Part 2 walkthrough**](https://github.com/mokabiru/databrickssqlmi/blob/master/Part2_README.md):
-Notebook 2 ([COVID19-Load-SQLManagedInstance](https://github.com/mokabiru/databrickssqlmi/blob/master/DatabricksNotebooks/COVID19-Load-SQLManagedInstance.dbc)) emphasizes on reading and writing data to Azure SQL Managed Instance using the Spark AzureSQL Connector that executes steps 4-6 in the data flow above.
+[**Part 2 walkthrough**](Part2_README.md):
+[Notebook2 - Read-Write-SQLMI-V1](DatabricksNotebooks/Notebook2%20-%20Read-Write-SQLMI-V1.ipynb) emphasizes on reading and writing data to Azure SQL Managed Instance using the Spark AzureSQL Connector that executes steps 4-6 in the data flow above.
 
-**Pre-requisites steps:**<br>**1. Install Spark Connector for Azure SQL Database:**<br>Install the [Spark AzureSQLDB connector library](https://docs.microsoft.com/en-us/azure/databricks/data/data-sources/sql-databases-azure) (`azure-sqldb-spark`) on the Databricks cluster either by manually downloading and uploading the [.jar file](https://github.com/Azure/azure-sqldb-spark/tree/master/releases/azure-sqldb-spark-1.0.0) or importing the Maven coordinate `com.microsoft.azure:azure-sqldb-spark:1.0.2` as shown below:
-![enter image description here](https://github.com/mokabiru/databrickssqlmi/raw/master/media/installlibrary.png)
-![enter image description here](https://github.com/mokabiru/databrickssqlmi/raw/master/media/maveninstall.png)
+## **Pre-requisites: {IMPORTANT}**
 
-**2. Prepare SQL MI Datamart:**<br>A sample BACPAC file `Covid19datamart.bacpac` is provided [here](https://github.com/mokabiru/databrickssqlmi/tree/master/SQLMI/bacpac) to import and create the datamart in SQL MI. Any existing data in Staging or Fact table needs to be deleted as the solution will insert a new dataset from the data lake. After importing the file from the GitHub repo to create the datamart in Azure SQL Managed Instance, run the following stored procedure on the imported datamart:
+**1. Select Databricks Runtime with Scala 2.11 or higher:**  
+When creating the Databricks cluster, it is important to select the Databricks Runtime  with Scala version 2.11 (or higher) which is compatible with the Spark connector for SQL Server and Azure SQL.
+![enter image description here](media/scalaversion.png)
 
-    EXEC sp_cleanuptables ‘all’
+**2. Install Spark Connector for Azure SQL Database:**<br>Install the [Spark connector for SQL Server library](https://github.com/microsoft/sql-spark-connector/releases/tag/v1.0) (`azure-sqldb-spark`) on the Databricks cluster by manually downloading and uploading the [apache-spark-sql-connector.jar](https://github.com/microsoft/sql-spark-connector/releases/download/v1.0/apache-spark-sql-connector.jar)<BR>
+![enter image description here](media/installlibrary.png)
+![enter image description here](media/installjar.png)
+
+**3. Prepare SQL MI Datamart:**<br>A sample BACPAC file `Covid19datamart.bacpac` is provided [here](SQLMI/bacpac) to import and create the datamart in SQL MI. Any existing data in Staging or Fact table needs to be deleted as the solution will insert a new dataset from the data lake. After importing the file from the GitHub repo to create the datamart in Azure SQL Managed Instance, run the following stored procedure on the imported datamart:
+```sql
+EXEC sp_cleanuptables ‘all’
+```
