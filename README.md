@@ -3,7 +3,7 @@
 </p>
 
 # Apache Spark Connector for SQL Server and Azure SQL
-Born out of Microsoft’s SQL Server Big Data Clusters investments, the Apache Spark Connector for SQL Server and Azure SQL is a high-performance connector that enables you to use transactional data in big data analytics and persists results for ad-hoc queries or reporting. The connector allows you to use any SQL database, on-premises or in the cloud, as an input data source or output data sink for Spark jobs.
+Born out of Microsoft’s SQL Server Big Data Clusters investments, the Apache Spark Connector for SQL Server and Azure SQL is a high-performance connector that enables you to use transactional data in big data analytics and persists results for ad-hoc queries or reporting. The connector allows you to use any SQL database, on-premises or in the cloud, as an input data source or output data sink for Spark jobs. 
 
 This library contains the source code for the Apache Spark Connector for SQL Server and Azure SQL.
 
@@ -13,15 +13,15 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQLServer.
 
-For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
+For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md) 
 
 ## Supported Features
-* Support for all Spark bindings (Scala, Python, R)
-* Basic authentication and Active Directory (AD) Key Tab support
+* Support for all Spark bindings (Scala, Python, R) 
+* Basic authentication and Active Directory (AD) Key Tab support 
 * Reordered DataFrame write support
 * Support for write to SQL Server Single instance and Data Pool in SQL Server Big Data Clusters
 * Reliable connector support for Sql Server Single Instance
-
+  
 
 | Component | Versions Supported |
 | --------- | ------------------ |
@@ -70,12 +70,11 @@ The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark Da
 
 To include the connector in your projects download this repository and build the jar using SBT.
 
-### Write to a new SQL Table
-#### Important: using the `overwrite` mode will first DROP the table if it already exists in the database. Please use this option with due care to avoid unexpected data loss!
+### Write to SQL Table
 ```python
 server_name = "jdbc:sqlserver://{SERVER_ADDR}"
 database_name = "database_name"
-url = server_name + ";" + "databaseName=" + database_name + ";"
+url = servername + ";" + "database_name=" + dbname + ";"
 
 table_name = "table_name"
 username = "username"
@@ -107,12 +106,6 @@ try:
     .save()
 except ValueError as error :
     print("Connector write failed", error)
-```
-
-### Specifying the isolation level
-This connector by default uses READ_COMMITTED isolation level when performing the bulk insert into the database. If you wish to override this to another isolation level, please use the `mssqlIsolationLevel` option as shown below.
-```python
-    .option("mssqlIsolationLevel", "READ_UNCOMMITTED") \
 ```
 
 ### Read from SQL Table

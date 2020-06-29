@@ -1,20 +1,12 @@
 ## Solution Part 2
-<<<<<<< HEAD
 ![enter image description here](media/Solution%20Architecture%20Numbered%20.jpg)
-=======
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/Solution%20Architecture%20Numbered%20.jpg)
->>>>>>> upstream/master
 
 4. Common data dimension tables and the staging table (in Step 3) from Azure SQL Managed Instance are read into dataframes in Azure Databricks.
 > The two Managed Instances shown in the “Store” and the “Serve” layer are essentially the same instance just depicted in different phases of the data flow. In a real-world, Azure SQL Managed Instance or Azure SQL Databases can play the role of both a data storage service and data serving service for consuming applications / data visualization tools.
 5. The dataframes containing the necessary dimension and staging data are further refined, joined and transformed to produce a denormalized fact table for reporting.
 6. The resulting denormalized data table is written to Azure SQL Managed Instance ready to serve the data consumers.
 
-<<<<<<< HEAD
 Notebook 2: [Notebook2 - Read-Write-SQLMI-V1](DatabricksNotebooks/Notebook2%20-%20Read-Write-SQLMI-V1.ipynb)
-=======
-Notebook 2: [Notebook2 - Read-Write-SQLMI-V1](https://github.com/mokabiru/databricks-azuresql-samples/blob/master/Spark_SQL_Connector/AzureSQLMI/DatabricksNotebooks/Notebook2%20-%20Read-Write-SQLMI-V1.ipynb)
->>>>>>> upstream/master
 
 The objective of this Python notebook is to demonstrate the usage of Spark connector for SQL Server to read and write data from Azure SQL Managed Instance while leveraging Spark in Azure Databricks to perform data transformation (Steps 4-6 in the architecture diagram above).
 
@@ -82,27 +74,14 @@ except ValueError as error :
     print("Connector Write failed", error)
 ```
 The records are now available in dbo.FactCovid19 in SQL MI
-<<<<<<< HEAD
 ![enter image description here](media/ssmsfactexplorer.png)
 ![enter image description here](media/ssmsfactselect.png)
-=======
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/ssmsfactexplorer.png)
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/ssmsfactselect.png)
->>>>>>> upstream/master
 
 The fact data can be visualized by reporting or data visualization tools like [Power BI](https://powerbi.microsoft.com/en-us/), consumed by APIs in downstream applications or even visualized in the same Databricks notebook as shown below.
 
 **Data visualization:**
-<<<<<<< HEAD
 ![enter image description here](media/map.png)
 
 [**<-- Go back to Part 1**](Part1_README.md)
 
 [**<-- Go to main page -->**](README.md)
-=======
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/map.png)
-
-[**<-- Go back to Part 1**](https://github.com/mokabiru/databricks-azuresql-samples/blob/master/Spark_SQL_Connector/AzureSQLMI/Part1_README.md)
-
-[**<-- Go to main page -->**](https://github.com/mokabiru/databricks-azuresql-samples/tree/master/Spark_SQL_Connector/AzureSQLMI)
->>>>>>> upstream/master

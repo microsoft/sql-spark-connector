@@ -1,9 +1,5 @@
 ## Solution Part 1
-<<<<<<< HEAD
 ![enter image description here](media/Solution%20Architecture%20Numbered%20.jpg)
-=======
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/Solution%20Architecture%20Numbered%20.jpg)
->>>>>>> upstream/master
 
 1. The solution extracts the COVID-19 public dataset available in a data lake (Azure Storage – Blob / ADLS Gen2) into Azure Databricks as a dataframe.
 2. The extracted COVID-19 dataset is cleaned, pre-processed, trained and scored using a Gradient Boosted Trees (GBT) Machine Learning model.
@@ -12,11 +8,7 @@
 > the only model for such prediction.
 3. The resulting dataset with the predicted scores is stored into a staging table in Azure SQL Managed Instance for further downstream transformation.
 
-<<<<<<< HEAD
 Notebook 1: [Notebook1 - DatabricksML-SQLMI-V1](DatabricksNotebooks/Notebook1%20-%20DatabricksML-SQLMI-V1.ipynb)
-=======
-Notebook 1: [Notebook1 - DatabricksML-SQLMI-V1](https://github.com/mokabiru/databricks-azuresql-samples/blob/master/Spark_SQL_Connector/AzureSQLMI/DatabricksNotebooks/Notebook1%20-%20DatabricksML-SQLMI-V1.ipynb)
->>>>>>> upstream/master
 
 This notebook executes steps 1-3 as described in the solution architecture above. It loads the dataset from the publicly available _[pandemicdatalake](https://azure.microsoft.com/en-au/services/open-datasets/catalog/ecdc-covid-19-cases/)_ in Azure Storage.
 
@@ -66,11 +58,7 @@ This notebook uses the [Spark Connector for SQL Server and Azure SQL](https://cl
 
 > While the Microsoft SQL Server JDBC driver library (mssql-jdbc) is pre-installed in [Databricks Runtime 3.4](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/3.4#pre-installed-java-and-scala-libraries-scala-210-cluster-version) and above, the new Spark connector for SQL needs to be exclusively installed using the .JAR file as shown in the pre-requisites section of this solution.
 
-<<<<<<< HEAD
 *Compared to the built-in JDBC connector, the Apache Spark Connector for SQL Server and Azure SQL is up to 15X faster than the default connector for data writes. The connector takes advantage of Spark’s distributed architecture to move data in parallel, efficiently using all cluster resources.*
-=======
-*Compared to the built-in JDBC connector, the Apache Spark Connector for SQL Server and Azure SQL is up to 15X faster than the default connector. The connector takes advantage of Spark’s distributed architecture to move data in parallel, efficiently using all cluster resources.*
->>>>>>> upstream/master
 ```python
 sqlmiconnection = dbutils.secrets.get(scope = "sqlmi-kv-secrets", key = "sqlmiconn")
 sqlmiuser = dbutils.secrets.get(scope = "sqlmi-kv-secrets", key = "sqlmiuser")
@@ -96,17 +84,12 @@ except ValueError as error :
     print("Connector write failed", error)
 ```
 
-<<<<<<< HEAD
 ![enter image description here](media/notebook1-writetoMI.png))
-=======
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/notebook1-writetoMI.png))
->>>>>>> upstream/master
 
 > It is recommended to store SQL MI credentials as secrets either in [Databricks scoped secrets or in Azure Key Vault](https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secret-scopes) to enable sharing the notebooks with multiple users without exposing the credentials displayed. Secrets retrieved in the notebook are always redacted when displayed assuring the SQL MI credentials are
 > never exposed to users.
 
 The records can be verified by querying the table `dbo.StagingPredictedCovid19` in SQL MI.
-<<<<<<< HEAD
 ![enter image description here](media/SQLMInotebook1screenshot.png))
 ![enter image description here](media/stagingtableresults.png)
 In the next part of the solution, data from this staging table is read back into Databricks along with the dimension table `dbo.DimCountry`, joined together and transformed to create a denormalized dataset to be written into the fact table `dbo.FactCovid19`.
@@ -114,12 +97,3 @@ In the next part of the solution, data from this staging table is read back into
 [**Proceed to Part 2 -->**](Part2_README.md)
 
 [**<-- Go back to main page**](README.md)
-=======
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/SQLMInotebook1screenshot.png))
-![enter image description here](https://github.com/mokabiru/databricks-azuresql-samples/raw/master/Spark_SQL_Connector/AzureSQLMI/media/stagingtableresults.png)
-In the next part of the solution, data from this staging table is read back into Databricks along with the dimension table `dbo.DimCountry`, joined together and transformed to create a denormalized dataset to be written into the fact table `dbo.FactCovid19`.
-
-[**Proceed to Part 2 -->**](https://github.com/mokabiru/databricks-azuresql-samples/blob/master/Spark_SQL_Connector/AzureSQLMI/Part2_README.md)
-
-[**<-- Go back to main page**](https://github.com/mokabiru/databricks-azuresql-samples/tree/master/Spark_SQL_Connector/AzureSQLMI)
->>>>>>> upstream/master
