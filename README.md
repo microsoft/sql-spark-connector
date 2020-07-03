@@ -126,7 +126,8 @@ jdbcDF = spark.read \
 ```
 
 ### Azure Active Directory Authentication
-Check sample notebooks for end-to-end example using a Service Principal.
+Complete example using a service principal can be found
+within sample notebooks.
 ```python
 jdbcDF = spark.read \
         .format("com.microsoft.sqlserver.jdbc.spark") \
