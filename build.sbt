@@ -13,11 +13,7 @@ javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-sql" % sparkVersion % "provided",
   // Spark Testing Utilities
-  "org.apache.spark" %% "spark-core" % sparkVersion % "test" classifier
-      "tests",
   "org.apache.spark" %% "spark-sql" % sparkVersion% "test" classifier
-      "tests",
-  "org.apache.spark" %% "spark-catalyst" % sparkVersion % "test" classifier
       "tests",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "com.novocode" % "junit-interface" % "0.11" % "test",
