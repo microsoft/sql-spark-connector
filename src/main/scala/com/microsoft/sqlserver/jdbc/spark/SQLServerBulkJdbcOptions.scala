@@ -1,24 +1,40 @@
 package com.microsoft.sqlserver.jdbc.spark
 
 import java.sql.Connection
+
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcOptionsInWrite
+import org.apache.spark.sql.execution.datasources.jdbc.{JDBCOptions, JdbcOptionsInWrite}
 
 class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String]) extends JdbcOptionsInWrite(params) {
 
     def this(params: Map[String, String]) = this(CaseInsensitiveMap(params))
-    
+
     // Save original parameters for when a JdbcBulkOptions instance is passed
     // from the Spark driver to an executor, which loses the reference to the
     // params input in memory
     override val parameters = params
 
+    val dbtable = params.getOrElse("dbtable", null)
+    val databaseName = params.getOrElse("databaseName", null)
+
     val user = params.getOrElse("user", null)
     val password = params.getOrElse("password", null)
-    val dbtable = params.getOrElse("dbtable", null)
+
+  //  AAD Authentication
+    val accessToken = params.getOrElse("accessToken", null)
+    val encrypt = params.getOrElse("encrypt", null)
+    val hostNameInCertificate = params.getOrElse("hostNameInCertificate", null)
+
+  // AAD Auth - Set the appropriate driver if an access token is specified
+    override val driverClass: String = {
+        if (!accessToken.==(null))
+            "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+        else
+            params.getOrElse(JDBCOptions.JDBC_DRIVER_CLASS, null)
+    }
 
     // If no value is provided, then we write to a single SQL Server instance.
-    // A non-empty value indicates the name of a data source whose location is 
+    // A non-empty value indicates the name of a data source whose location is
     // the data pool that the user wants to write to. This data source will
     // contain the user's external table.
     val dataPoolDataSource = params.getOrElse("dataPoolDataSource", null)

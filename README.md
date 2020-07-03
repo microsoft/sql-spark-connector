@@ -125,6 +125,20 @@ jdbcDF = spark.read \
         .option("password", password).load()
 ```
 
+### Azure Active Directory Authentication
+Check sample notebooks for end-to-end example using a Service Principal.
+```python
+jdbcDF = spark.read \
+        .format("com.microsoft.sqlserver.jdbc.spark") \
+        .option("url", url) \
+        .option("dbtable", table_name) \
+        .option("accessToken", access_token) \
+        .option("encrypt", "true") \
+        .option("hostNameInCertificate", "*.database.windows.net") \
+        .load()
+```
+
+
 Please check the [sample notebooks](samples) for examples.
 
 # Contributing
