@@ -7,46 +7,9 @@ import org.apache.spark.sql.test.SharedSQLContext
 
 class DataSourceTest extends SparkFunSuite with Matchers with SharedSQLContext {
 
-  test("Schema validation between Spark DataFrame and SQL Server ResultSet") {}
+    test("Schema validation between Spark DataFrame and SQL Server ResultSet"){
 
-  test("JdbcBulkOptions should have proper Bulk configurations") {
-    // The last character in each key is capitalized to test case insensitivity
-    val params = Map(
-      // Standard JdbcOptions configurations
-      "urL" -> "jdbc:sqlserver://myUrl",
-      "useR" -> "admin1",
-      "passworD" -> "password1",
-      "dbtablE" -> "myTable",
-      "partitionColumN" -> "myPartitionColumn",
-      "databaseNamE" -> "myDatabase",
-      "accessTokeN" -> "1234",
-      "encrypT" -> "true",
-      "hostNameInCertificatE" -> "*.database.windows.net",
-      "driverClasS" -> "com.microsoft.sqlserver.jdbc.SQLServerDriver",
-      "lowerBounD" -> "6",
-      "upperBounD" -> "7",
-      "numPartitionS" -> "1",
-      "queryTimeouT" -> "2",
-      "fetchSizE" -> "3",
-      "truncatE" -> "true",
-      "createTableOptionS" -> "myCreateTableOptions",
-      "createTableColumnTypeS" -> "myCreateTableColumnTypes",
-      "customSchemA" -> "myCustomSchema",
-      "batchsizE" -> "4",
-      "mssqlIsolationLeveL" -> "SERIALIZABLE",
-      "sessionInitStatemenT" -> "mySessionInitStatement",
-      "pushDownPredicatE" -> "false",
-      // BulkCopy API configurations
-      "checkConstraintS" -> "true",
-      "fireTriggerS" -> "true",
-      "keepIdentitY" -> "true",
-      "keepNullS" -> "true",
-      "tableLocK" -> "true",
-      "allowEncryptedValueModificationS" -> "true",
-      // New additions
-      "reliabilityLeveL" -> "NO_DUPLICATES",
-      "dataPoolDataSourcE" -> "testDataSource"
-    )
+    }
 
     test("JdbcBulkOptions should have proper Bulk configurations") {
         // The last character in each key is capitalized to test case insensitivity
