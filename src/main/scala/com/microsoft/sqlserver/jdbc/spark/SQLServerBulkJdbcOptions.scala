@@ -24,9 +24,6 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String]) extends J
     val accessToken = params.getOrElse("accessToken", null)
     val encrypt = params.getOrElse("encrypt", null)
     val hostNameInCertificate = params.getOrElse("hostNameInCertificate", null)
-
-  // AAD Auth - Set the appropriate driver if an access token is specified
-
     // If no value is provided, then we write to a single SQL Server instance.
     // A non-empty value indicates the name of a data source whose location is
     // the data pool that the user wants to write to. This data source will
