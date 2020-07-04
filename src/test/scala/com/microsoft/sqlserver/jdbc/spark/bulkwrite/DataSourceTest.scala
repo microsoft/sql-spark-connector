@@ -2,19 +2,11 @@ package com.microsoft.sqlserver.jdbc.spark
 import java.sql.Connection
 
 import org.scalatest.Matchers
-import org.apache.spark.{SparkConf, SparkContext, SparkFunSuite}
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.SparkFunSuite
 import org.apache.spark.sql.test.SharedSQLContext
 
 class DataSourceTest extends SparkFunSuite with Matchers with SharedSQLContext {
-    val config =
-      new SparkConf().setAppName("DataSourceTest").setMaster("local[*]")
-    val sc = new SparkContext(config)
 
-    implicit val sparkSession: SparkSession = SparkSession
-        .builder()
-        .config(sc.getConf)
-        .getOrCreate()
     test("Schema validation between Spark DataFrame and SQL Server ResultSet"){
 
     }
@@ -170,17 +162,8 @@ class DataSourceTest extends SparkFunSuite with Matchers with SharedSQLContext {
                 "accessToken" -> "1234"
             )
         )
-        
         options.driverClass should be("com.microsoft.sqlserver.jdbc.SQLServerDriver")
     }
 
-    test("When accessToken is not specified, AAD driver is not set.") {
-        val options = new SQLServerBulkJdbcOptions(
-            Map("urL" -> "jdbc:sqlserver://myUrl",
-                "dbtablE" -> "myTable"
-            )
-        )
-        
-        options.driverClass should be(null)
-    }
+
 }
