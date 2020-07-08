@@ -25,9 +25,7 @@ import com.microsoft.sqlserver.jdbc.spark.{Connector, SQLServerBulkJdbcOptions}
 import org.scalatest.Matchers
 
 import org.apache.spark.SparkFunSuite
-import org.apache.spark.sql.test.SharedSQLContext
-
-class ConnectorStrategiesTest extends SparkFunSuite with Matchers with SharedSQLContext {
+class ConnectorStrategiesTest extends SparkFunSuite with Matchers {
   test("SingleInstanceConnector is set to an instance connector type") {
     SingleInstanceConnector
       .getType()
