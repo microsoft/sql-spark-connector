@@ -21,21 +21,33 @@
 
 package com.microsoft.sqlserver.jdbc.spark.connectors
 
-import com.microsoft.sqlserver.jdbc.spark.{ColumnMetadata, SQLServerBulkJdbcOptions}
+import com.microsoft.sqlserver.jdbc.spark.Connector
 
-import org.apache.spark.sql.DataFrame
+object ConnectorStrategies {
+  var cache: Iterable[ConnectorStrategy] = Iterable[ConnectorStrategy]()
 
-/**
- * Interface to define a read/write strategy.
- * Override write to define a write strategy for the connector.
- * Note Read functionality is re-used from default JDBC connector.
- * Read interface can be defined here in the future if required.
- * */
-abstract class DataIOStrategy extends StrategyType {
-  def getType(): String
-  def write(
-      df: DataFrame,
-      colMetaData: Array[ColumnMetadata],
-      options: SQLServerBulkJdbcOptions,
-      appId: String): Unit
+  def reliabilityMatches(conn: Connector, connStrategy: ConnectorStrategy): Boolean =
+    conn
+      .params()
+      .get("reliabilityLevel")
+      .contains(connStrategy.strategy().toString)
+
+  def strategyTypeMatches(conn: Connector, connStrategy: ConnectorStrategy): Boolean =
+    conn.getType() == connStrategy.asInstanceOf[StrategyType].getType()
+
+  def strategyMatches(conn: Connector, connStrategy: ConnectorStrategy): Boolean =
+    reliabilityMatches(conn, connStrategy) && strategyTypeMatches(conn, connStrategy)
+
+  /**
+   * Allows for matching connector types (data pool, instance, etc) to their
+   * respective reliability level.
+   */
+  def get(connector: Connector): DataIOStrategy =
+    cache
+      .find(strategyMatches(connector, _))
+      .getOrElse(NullConnectorStrategy)
+      .asInstanceOf[DataIOStrategy]
+
+  def register(connStrategy: ConnectorStrategy): Unit =
+    cache = cache ++ Iterable[ConnectorStrategy](connStrategy)
 }

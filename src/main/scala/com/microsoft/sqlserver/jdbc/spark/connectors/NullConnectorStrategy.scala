@@ -22,40 +22,16 @@
 package com.microsoft.sqlserver.jdbc.spark.connectors
 
 import com.microsoft.sqlserver.jdbc.spark.{ColumnMetadata, SQLServerBulkJdbcOptions}
-import com.microsoft.sqlserver.jdbc.spark.utils.BulkCopyUtils.savePartition
 
-import org.apache.spark.internal.Logging
 import org.apache.spark.sql.DataFrame
 
-/**
- * Implements the BEST_EFFORT write strategy for Single Instance. All executors insert
- * into a user specified table directly. Write to table is not transactional and
- * may results in duplicates in executor restart scenarios.
- */
-object BestEffortSingleInstanceStrategy
-    extends DataIOStrategy
-    with Logging
-    with ConnectorStrategy
-    with StrategyType {
-  def getType(): String = SQLServerBulkJdbcOptions.InstanceStrategy
+object NullConnectorStrategy extends DataIOStrategy with ConnectorStrategy with StrategyType {
 
-  /**
-   * write implements the default write strategy. Each executor writes a
-   * partition of data to SQL instance. The executors will retry under failures
-   * and this may result in duplicates
-   */
+  def getType(): String = SQLServerBulkJdbcOptions.InstanceStrategy
   def write(
       df: DataFrame,
-      colMetaData: Array[ColumnMetadata],
+      dfColMetaData: Array[ColumnMetadata],
       options: SQLServerBulkJdbcOptions,
-      appId: String): Unit = {
-    logInfo("write : best effort write to single instance called")
-
-    val dfColMetadata = colMetaData
-    df.rdd.foreachPartition(iterator =>
-      savePartition(iterator, options.dbtable, dfColMetadata, options))
-  }
-  def strategy(): Int = {
-    SQLServerBulkJdbcOptions.BEST_EFFORT
-  }
+      appId: String): Unit = {}
+  override def strategy(): Int = -1
 }

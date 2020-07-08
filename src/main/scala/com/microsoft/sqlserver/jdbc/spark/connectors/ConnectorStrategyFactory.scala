@@ -21,21 +21,15 @@
 
 package com.microsoft.sqlserver.jdbc.spark.connectors
 
-import com.microsoft.sqlserver.jdbc.spark.{ColumnMetadata, SQLServerBulkJdbcOptions}
+import com.microsoft.sqlserver.jdbc.spark.Connector
 
-import org.apache.spark.sql.DataFrame
+object ConnectorStrategyFactory {
+  /* Register Strategies */
+  ConnectorStrategies.register(BestEffortDataPoolStrategy)
+  ConnectorStrategies.register(ReliableSingleInstanceStrategy)
+  ConnectorStrategies.register(BestEffortSingleInstanceStrategy)
 
-/**
- * Interface to define a read/write strategy.
- * Override write to define a write strategy for the connector.
- * Note Read functionality is re-used from default JDBC connector.
- * Read interface can be defined here in the future if required.
- * */
-abstract class DataIOStrategy extends StrategyType {
-  def getType(): String
-  def write(
-      df: DataFrame,
-      colMetaData: Array[ColumnMetadata],
-      options: SQLServerBulkJdbcOptions,
-      appId: String): Unit
+  def create(connector: Connector): DataIOStrategy = {
+    ConnectorStrategies.get(connector)
+  }
 }

@@ -19,23 +19,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.microsoft.sqlserver.jdbc.spark.connectors
+package com.microsoft.sqlserver.jdbc.spark;
 
-import com.microsoft.sqlserver.jdbc.spark.{ColumnMetadata, SQLServerBulkJdbcOptions}
+import org.junit.Test;
 
-import org.apache.spark.sql.DataFrame
+import java.sql.Types;
 
-/**
- * Interface to define a read/write strategy.
- * Override write to define a write strategy for the connector.
- * Note Read functionality is re-used from default JDBC connector.
- * Read interface can be defined here in the future if required.
- * */
-abstract class DataIOStrategy extends StrategyType {
-  def getType(): String
-  def write(
-      df: DataFrame,
-      colMetaData: Array[ColumnMetadata],
-      options: SQLServerBulkJdbcOptions,
-      appId: String): Unit
+import static org.junit.Assert.assertEquals;
+
+public class ColumnMetadataTest {
+    @Test
+    public void checkColumnMetadataTypes() {
+        String name = "testName";
+        int type = Types.INTEGER;
+        int precision = 50;
+        int scale = 10;
+        Boolean isAutoIncrement = true;
+
+        ColumnMetadata columnMetadata =
+                new ColumnMetadata(name, type, precision, scale, isAutoIncrement, 20);
+
+        assertEquals(name, columnMetadata.getName());
+        assertEquals(type, columnMetadata.getType());
+        assertEquals(precision, columnMetadata.getPrecision());
+        assertEquals(scale, columnMetadata.getScale());
+        assertEquals(isAutoIncrement, columnMetadata.isAutoIncrement());
+    }
 }
