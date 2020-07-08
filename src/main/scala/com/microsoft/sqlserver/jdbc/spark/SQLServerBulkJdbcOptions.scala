@@ -2,7 +2,6 @@ package com.microsoft.sqlserver.jdbc.spark
 
 import java.sql.Connection
 
-import com.microsoft.sqlserver.jdbc.SqlAuthentication
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 import org.apache.spark.sql.execution.datasources.jdbc.{
   JDBCOptions,
@@ -24,6 +23,7 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
 
   val user = params.getOrElse("user", null)
   val password = params.getOrElse("password", null)
+
 //  AAD Authentication
   val accessToken = params.getOrElse("accessToken", null)
   val encrypt = params.getOrElse("encrypt", null)
@@ -32,6 +32,7 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
   override val driverClass = params.getOrElse(
     "driverClass",
     "com.microsoft.sqlserver.jdbc.SQLServerDriver")
+
   // If no value is provided, then we write to a single SQL Server instance.
   // A non-empty value indicates the name of a data source whose location is
   // the data pool that the user wants to write to. This data source will
