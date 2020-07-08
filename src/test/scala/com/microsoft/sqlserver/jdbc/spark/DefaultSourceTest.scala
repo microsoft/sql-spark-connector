@@ -24,9 +24,9 @@ package com.microsoft.sqlserver.jdbc.spark
 import java.sql.Connection
 
 import com.microsoft.sqlserver.jdbc.spark.utils.{BulkCopyUtils, DataPoolUtils}
-import org.apache.spark.SparkFunSuite
 import org.scalatest.Matchers
 
+import org.apache.spark.SparkFunSuite
 import org.apache.spark.sql.test.SharedSQLContext
 
 class DefaultSourceTest extends SparkFunSuite with Matchers with SharedSQLContext {
@@ -99,7 +99,8 @@ class DefaultSourceTest extends SparkFunSuite with Matchers with SharedSQLContex
     assert(options.keepNulls == params("keepNullS").toBoolean)
     assert(options.tableLock == params("tableLocK").toBoolean)
     assert(
-      options.allowEncryptedValueModifications == params("allowEncryptedValueModificationS").toBoolean)
+      options.allowEncryptedValueModifications
+        == params("allowEncryptedValueModificationS").toBoolean)
 
     assert(options.dataPoolDataSource == params("dataPoolDataSourcE"))
     assert(options.reliabilityLevel == SQLServerBulkJdbcOptions.NO_DUPLICATES)
@@ -109,7 +110,8 @@ class DefaultSourceTest extends SparkFunSuite with Matchers with SharedSQLContex
 
   test("Data pool URL generation") {
     val urlParams =
-      "database=spark_mssql_db;user=testusera1;password=mypass;encrypt=false;trustServerCertificate=true;"
+      "database=spark_mssql_db;user=testusera1;password=mypass" +
+        ";encrypt=false;trustServerCertificate=true;"
     val masterUrl = createURL("master-pv", "5678", urlParams)
     val params = Map("urL" -> masterUrl, "dbtablE" -> "myTable")
     val options = new SQLServerBulkJdbcOptions(params)
