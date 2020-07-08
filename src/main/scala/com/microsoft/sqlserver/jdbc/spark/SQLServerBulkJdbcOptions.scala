@@ -2,6 +2,7 @@ package com.microsoft.sqlserver.jdbc.spark
 
 import java.sql.Connection
 
+import com.microsoft.sqlserver.jdbc.SqlAuthentication
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 import org.apache.spark.sql.execution.datasources.jdbc.{
   JDBCOptions,
