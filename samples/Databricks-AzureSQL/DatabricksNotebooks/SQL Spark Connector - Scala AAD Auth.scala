@@ -1,6 +1,6 @@
 // Databricks notebook source
 // DBTITLE 1,Import Microsoft ADAL Library
-// Provides Access Token
+// REQUIREMENT - The com.microsoft.aad.adal4j artifact must be included as a dependency.
 import com.microsoft.aad.adal4j.{AuthenticationContext, ClientCredential}
 
 // COMMAND ----------
@@ -32,22 +32,57 @@ val resourceAppIdURI = "https://database.windows.net/"
 
 // COMMAND ----------
 
-// DBTITLE 1,Acquire Access Token
+// DBTITLE 1,Authentication Options
+// SERVICE PRINCIPAL AUTHENTICATION
+//   You will need to obtain an access token.
+//   The "accessToken" option is used in the spark dataframe to indicate this 
+//   authentication modality.
 val service = Executors.newFixedThreadPool(1)
 val context = new AuthenticationContext(authority, true, service);
-val ClientCred = new ClientCredential(spnId, spnSecret)
+val ClientCred = new ClientCredential(principalClientId, principalSecret)
 val authResult = context.acquireToken(resourceAppIdURI, ClientCred, null)
 
 val accessToken = authResult.get().getAccessToken
 
+// ACTIVE DIRECTORY PASSWORD AUTHENTICATION
+//   The "authentication" option with the value of "ActiveDirectoryPassword"
+//   is used in the spark dataframe to indicate this 
+//   authentication modality. 
+//
+//   The "user" and "password" options apply to both SQL Authentication
+//   and Active Directory Authentication.  SQL Authentication is used
+//   by default and can be switched to Active Directory with the
+//   authentication option above.
+val user = dbutils.secrets.get("adUser")
+val password = dbutils.secrets.get("adPassword")
+
+
 // COMMAND ----------
 
-// DBTITLE 1,Display a Spark Dataframe Showing Results from SQL
+// DBTITLE 1,Query SQL using Spark with Service Principal
+
 val jdbcDF = spark.read
     .format("com.microsoft.sqlserver.jdbc.spark")
     .option("url", url)
     .option("dbtable", dbTable)
     .option("accessToken", accessToken)
+    .option("encrypt", "true")
+    .option("hostNameInCertificate", "*.database.windows.net")
+    .load()
+
+  display(jdbcDF.select("SourceViewName").limit(1))
+
+// COMMAND ----------
+
+// DBTITLE 1,Query SQL using Spark with Active Directory Password
+
+val jdbcDF = spark.read
+    .format("com.microsoft.sqlserver.jdbc.spark")
+    .option("url", url)
+    .option("dbtable", dbTable)
+    .option("authentication", "ActiveDirectoryPassword")
+    .option("user", user)
+    .option("password", password)
     .option("encrypt", "true")
     .option("hostNameInCertificate", "*.database.windows.net")
     .load()

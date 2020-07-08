@@ -2,65 +2,77 @@ package com.microsoft.sqlserver.jdbc.spark
 
 import java.sql.Connection
 
+import com.microsoft.sqlserver.jdbc.SqlAuthentication
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
-import org.apache.spark.sql.execution.datasources.jdbc.{JDBCOptions, JdbcOptionsInWrite}
+import org.apache.spark.sql.execution.datasources.jdbc.{
+  JDBCOptions,
+  JdbcOptionsInWrite
+}
 
-class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String]) extends JdbcOptionsInWrite(params) {
+class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
+    extends JdbcOptionsInWrite(params) {
 
-    def this(params: Map[String, String]) = this(CaseInsensitiveMap(params))
+  def this(params: Map[String, String]) = this(CaseInsensitiveMap(params))
 
-    // Save original parameters for when a JdbcBulkOptions instance is passed
-    // from the Spark driver to an executor, which loses the reference to the
-    // params input in memory
-    override val parameters = params
+  // Save original parameters for when a JdbcBulkOptions instance is passed
+  // from the Spark driver to an executor, which loses the reference to the
+  // params input in memory
+  override val parameters = params
 
-    val dbtable = params.getOrElse("dbtable", null)
-    val databaseName = params.getOrElse("databaseName", null)
+  val dbtable = params.getOrElse("dbtable", null)
+  val databaseName = params.getOrElse("databaseName", null)
 
-    val user = params.getOrElse("user", null)
-    val password = params.getOrElse("password", null)
+  val user = params.getOrElse("user", null)
+  val password = params.getOrElse("password", null)
+//  AAD Authentication
+  val accessToken = params.getOrElse("accessToken", null)
+  val encrypt = params.getOrElse("encrypt", null)
+  val hostNameInCertificate = params.getOrElse("hostNameInCertificate", null)
 
-  //  AAD Authentication
-    val accessToken = params.getOrElse("accessToken", null)
-    val encrypt = params.getOrElse("encrypt", null)
-    val hostNameInCertificate = params.getOrElse("hostNameInCertificate", null)
-    // If no value is provided, then we write to a single SQL Server instance.
-    // A non-empty value indicates the name of a data source whose location is
-    // the data pool that the user wants to write to. This data source will
-    // contain the user's external table.
-    val dataPoolDataSource = params.getOrElse("dataPoolDataSource", null)
+  override val driverClass = params.getOrElse(
+    "driverClass",
+    "com.microsoft.sqlserver.jdbc.SQLServerDriver")
+  // If no value is provided, then we write to a single SQL Server instance.
+  // A non-empty value indicates the name of a data source whose location is
+  // the data pool that the user wants to write to. This data source will
+  // contain the user's external table.
+  val dataPoolDataSource = params.getOrElse("dataPoolDataSource", null)
 
-    // In the standard Spark JDBC implementation, the default isolation level is
-    // "READ_UNCOMMITTED," but for SQL Server, the default is "READ_COMMITTED"
-    override val isolationLevel = params.getOrElse("mssqlIsolationLevel", "READ_COMMITTED") match {
-        case "READ_UNCOMMITTED" => Connection.TRANSACTION_READ_UNCOMMITTED
-        case "READ_COMMITTED"   => Connection.TRANSACTION_READ_COMMITTED
-        case "REPEATABLE_READ"  => Connection.TRANSACTION_REPEATABLE_READ
-        case "SERIALIZABLE"     => Connection.TRANSACTION_SERIALIZABLE
-        case "SNAPSHOT"         => Connection.TRANSACTION_READ_COMMITTED + 4094
+  // In the standard Spark JDBC implementation, the default isolation level is
+  // "READ_UNCOMMITTED," but for SQL Server, the default is "READ_COMMITTED"
+  override val isolationLevel =
+    params.getOrElse("mssqlIsolationLevel", "READ_COMMITTED") match {
+      case "READ_UNCOMMITTED" => Connection.TRANSACTION_READ_UNCOMMITTED
+      case "READ_COMMITTED"   => Connection.TRANSACTION_READ_COMMITTED
+      case "REPEATABLE_READ"  => Connection.TRANSACTION_REPEATABLE_READ
+      case "SERIALIZABLE"     => Connection.TRANSACTION_SERIALIZABLE
+      case "SNAPSHOT"         => Connection.TRANSACTION_READ_COMMITTED + 4094
     }
 
-    val reliabilityLevel = params.getOrElse("reliabilityLevel", "BEST_EFFORT") match {
-        case "BEST_EFFORT"      => SQLServerBulkJdbcOptions.BEST_EFFORT
-        case "NO_DUPLICATES"    => SQLServerBulkJdbcOptions.NO_DUPLICATES
+  val reliabilityLevel =
+    params.getOrElse("reliabilityLevel", "BEST_EFFORT") match {
+      case "BEST_EFFORT"   => SQLServerBulkJdbcOptions.BEST_EFFORT
+      case "NO_DUPLICATES" => SQLServerBulkJdbcOptions.NO_DUPLICATES
     }
 
-    // batchSize is already defined in JDBCOptions superclass
-    val checkConstraints = params.getOrElse("checkConstraints", "false").toBoolean
-    val fireTriggers = params.getOrElse("fireTriggers", "false").toBoolean
-    val keepIdentity = params.getOrElse("keepIdentity", "false").toBoolean
-    val keepNulls = params.getOrElse("keepNulls", "false").toBoolean
-    val tableLock = params.getOrElse("tableLock", "false").toBoolean
-    val allowEncryptedValueModifications = params.getOrElse("allowEncryptedValueModifications", "false").toBoolean
+  // batchSize is already defined in JDBCOptions superclass
+  val checkConstraints = params.getOrElse("checkConstraints", "false").toBoolean
+  val fireTriggers = params.getOrElse("fireTriggers", "false").toBoolean
+  val keepIdentity = params.getOrElse("keepIdentity", "false").toBoolean
+  val keepNulls = params.getOrElse("keepNulls", "false").toBoolean
+  val tableLock = params.getOrElse("tableLock", "false").toBoolean
+  val allowEncryptedValueModifications =
+    params.getOrElse("allowEncryptedValueModifications", "false").toBoolean
 
-    // Not a feature
-    // Only used for internally testing data idempotency
-    val testDataIdempotency = params.getOrElse("testDataIdempotency", "false").toBoolean
+  // Not a feature
+  // Only used for internally testing data idempotency
+  val testDataIdempotency =
+    params.getOrElse("testDataIdempotency", "false").toBoolean
 
-    val dataPoolDistPolicy = params.getOrElse("dataPoolDistPolicy", "ROUND_ROBIN")
+  val dataPoolDistPolicy = params.getOrElse("dataPoolDistPolicy", "ROUND_ROBIN")
 }
 
 object SQLServerBulkJdbcOptions {
-    val BEST_EFFORT = 0
-    val NO_DUPLICATES = 1
+  val BEST_EFFORT = 0
+  val NO_DUPLICATES = 1
 }

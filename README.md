@@ -126,10 +126,14 @@ jdbcDF = spark.read \
 ```
 
 ### Azure Active Directory Authentication
-Complete example using a service principal can be found
-within sample notebooks.
+
+**Python Example with Service Principal**
 ```python
-jdbcDF = spark.read \
+context = adal.AuthenticationContext(authority)
+token = context.acquire_token_with_client_credentials(resource_app_id_url, service_principal_id, service_principal_secret)
+access_token = token["accessToken"]
+
+jdbc_db = spark.read \
         .format("com.microsoft.sqlserver.jdbc.spark") \
         .option("url", url) \
         .option("dbtable", table_name) \
@@ -138,6 +142,27 @@ jdbcDF = spark.read \
         .option("hostNameInCertificate", "*.database.windows.net") \
         .load()
 ```
+
+**Python Example with Active Directory Password**
+```python
+jdbc_df = spark.read \
+        .format("com.microsoft.sqlserver.jdbc.spark") \
+        .option("url", url) \
+        .option("dbtable", table_name) \
+        .option("authentication", "ActiveDirectoryPassword") \
+        .option("user", user_name) \
+        .option("password", password) \
+        .option("encrypt", "true") \
+        .option("hostNameInCertificate", "*.database.windows.net") \
+        .load()
+```
+A required dependency must be installed in order to authenticate using
+Active Directory.
+
+For **Scala,** the _com.microsoft.aad.adal4j_ artifact will need to be installed.
+
+For **Python,** the _adal_ library will need to be installed.  This is available 
+via pip.
 
 
 Please check the [sample notebooks](samples) for examples.
