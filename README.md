@@ -31,6 +31,8 @@ For main changes from previous releases and known issues please refer to [CHANGE
 | Microsoft SQL Server | SQL Server 2008 or later |
 | Azure SQL Databases | Supported |
 
+*Note: Azure Synapse (Azure SQL DW) use is not tested with this connector. While it may work, there may be unintended consequences.*
+
 ### Supported Options
 The Apache Spark Connector for SQL Server and Azure SQL supports the options defined here: [SQL DataSource JDBC](https://spark.apache.org/docs/latest/sql-data-sources-jdbc.html)
 
@@ -127,6 +129,12 @@ jdbcDF = spark.read \
 
 Please check the [sample notebooks](samples) for examples.
 
+# Support
+The Apache Spark Connector for Azure SQL and SQL Server is an open source project. This connector does not come with any Microsoft support unless it is being used within SQL Server Big Data Clusters. For issues with or questions about the connector, please create an Issue in this project repository. The connector community is active and monitoring submissions.
+
+# Roadmap
+Visit the Connector project in the **Projects** tab to see needed / planned items. Feel free to make an issue and start contributing!
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -140,6 +148,3 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-## Roadmap
-Visit the Connector project in the **Projects** tab to see needed / planned items. Feel free to make an issue and start contributing!
