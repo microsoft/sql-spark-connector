@@ -25,9 +25,9 @@ For main changes from previous releases and known issues please refer to [CHANGE
 
 | Component | Versions Supported |
 | --------- | ------------------ |
-| Apache Spark | 2.4.5 or later |
-| Scala | 2.11 or later (Java 8+) |
-| Microsoft JDBC Driver for SQL Server | 6.2 or later |
+| Apache Spark | 2.4.5 (Spark 3.0 not supported) |
+| Scala | 2.11 |
+| Microsoft JDBC Driver for SQL Server | 8.2 |
 | Microsoft SQL Server | SQL Server 2008 or later |
 | Azure SQL Databases | Supported |
 
