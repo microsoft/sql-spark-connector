@@ -53,10 +53,6 @@ class DataSourceTest extends SparkFunSuite with Matchers with SharedSQLContext {
     assert(options.user == params("useR"))
     assert(options.password == params("passworD"))
     assert(options.dbtable == params("dbtablE"))
-    assert(options.databaseName == params("databaseNamE"))
-    assert(options.accessToken == params("accessTokeN"))
-    assert(options.encrypt == params("encrypT"))
-    assert(options.hostNameInCertificate == params("hostNameInCertificatE"))
     assert(options.lowerBound.get == params("lowerBounD"))
     assert(options.upperBound.get == params("upperBounD"))
     assert(options.numPartitions.get == params("numPartitionS").toInt)
@@ -164,9 +160,9 @@ class DataSourceTest extends SparkFunSuite with Matchers with SharedSQLContext {
       Map("urL" -> "jdbc:sqlserver://myUrl", "dbtablE" -> "myTable")
     )
 
-    options.encrypt should be(null)
-    options.hostNameInCertificate should be(null)
-    options.accessToken should be(null)
+    options.params.get("encrypt") should be(None)
+    options.params.get("hostNameInCertificate") should be(None)
+    options.params.get("accessToken") should be(None)
   }
 
   test("Correct AAD options are set when accessToken is specified") {
@@ -179,7 +175,8 @@ class DataSourceTest extends SparkFunSuite with Matchers with SharedSQLContext {
     )
     options.driverClass should be(
       "com.microsoft.sqlserver.jdbc.SQLServerDriver")
-    options.encrypt should be("true")
-    options.hostNameInCertificate should be("*.database.windows.net")
+    options.params.get("encrypt") should be(Some("true"))
+    options.params.get("hostNameInCertificate") should be(
+      Some("*.database.windows.net"))
   }
 }

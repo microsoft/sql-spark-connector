@@ -19,14 +19,9 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
   override val parameters = params
 
   val dbtable = params.getOrElse("dbtable", null)
-  val databaseName = params.getOrElse("databaseName", null)
 
   val user = params.getOrElse("user", null)
   val password = params.getOrElse("password", null)
-
-  val accessToken = params.getOrElse("accessToken", null)
-  val encrypt = params.getOrElse("encrypt", null)
-  val hostNameInCertificate = params.getOrElse("hostNameInCertificate", null)
 
   override val driverClass = params.getOrElse(
     "driverClass",
