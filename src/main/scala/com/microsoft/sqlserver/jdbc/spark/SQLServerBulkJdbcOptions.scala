@@ -24,7 +24,6 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
   val user = params.getOrElse("user", null)
   val password = params.getOrElse("password", null)
 
-//  AAD Authentication
   val accessToken = params.getOrElse("accessToken", null)
   val encrypt = params.getOrElse("encrypt", null)
   val hostNameInCertificate = params.getOrElse("hostNameInCertificate", null)
