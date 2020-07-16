@@ -23,10 +23,6 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
   val user = params.getOrElse("user", null)
   val password = params.getOrElse("password", null)
 
-  override val driverClass = params.getOrElse(
-    "driverClass",
-    "com.microsoft.sqlserver.jdbc.SQLServerDriver")
-
   // If no value is provided, then we write to a single SQL Server instance.
   // A non-empty value indicates the name of a data source whose location is
   // the data pool that the user wants to write to. This data source will
