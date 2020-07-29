@@ -73,7 +73,8 @@ The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark Da
 To include the connector in your projects download this repository and build the jar using SBT.
 
 ### Write to a new SQL Table
-#### Important: using the `overwrite` mode will first DROP the table if it already exists in the database. Please use this option with due care to avoid unexpected data loss!
+#### Important: using the `overwrite` mode will first DROP the table if it already exists in the database by default. Please use this option with due care to avoid unexpected data loss!
+### When using mode `overwrite` if you do not use the option `truncate` , on recreation of the table indexes will be lost. For example a columnstore table would now be a heap. If you want to maintain existing indexing please also specify option `truncate` with value true. i.e .option("truncate",true)
 ```python
 server_name = "jdbc:sqlserver://{SERVER_ADDR}"
 database_name = "database_name"
