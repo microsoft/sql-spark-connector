@@ -4,9 +4,9 @@ organization := "com.microsoft.sqlserver.jdbc.spark"
 
 version := "1.0.0"
 
-scalaVersion := "2.11.12"
-
-val sparkVersion = "2.4.6"
+scalaVersion := "2.12.11"
+ThisBuild / useCoursier := false
+val sparkVersion = "3.0.0"
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
       "tests",
   "org.apache.spark" %% "spark-catalyst" % sparkVersion % "test" classifier
       "tests",
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
   "com.novocode" % "junit-interface" % "0.11" % "test",
 
   //SQLServer JDBC jars
