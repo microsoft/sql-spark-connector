@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.11" % "test",
 
   //SQLServer JDBC jars
-  "com.microsoft.sqlserver" % "mssql-jdbc" % "7.2.1.jre8"
+  "com.microsoft.sqlserver" % "mssql-jdbc" % "8.2.1.jre8"
 )
 
 scalacOptions := Seq("-unchecked", "-deprecation", "evicted")
