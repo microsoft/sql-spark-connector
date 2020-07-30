@@ -72,6 +72,16 @@ The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark Da
 
 To include the connector in your projects download this repository and build the jar using SBT.
 
+### Migrating from Legacy Azure SQL Connector for Spark
+####Receiving `java.lang.NoClassDefFoundError` when trying to use the new connector with Azure Databricks?
+
+If you are migrating from the previous Azure SQL Connector for Spark and have manually installed drivers onto that cluster for AAD compatibility, you will most likely need to remove those custom drivers, restore the previous drivers that ship by default with Databricks, uninstall the previous connector, and restart your cluster.  You may be better off spinning up a new cluster. 
+
+With this new connector, you should be able to simply install onto a cluster (new or existing cluster that hasn't had its drivers modified) or a cluster which previously used modified drivers for the older Azure SQL Connector for Spark provided the modified drivers were removed and the previous default drivers restored.
+
+See [Issue #26](https://github.com/microsoft/sql-spark-connector/issues/26) for more details.
+
+
 ### Write to a new SQL Table
 #### Important: using the `overwrite` mode will first DROP the table if it already exists in the database by default. Please use this option with due care to avoid unexpected data loss!
 ### When using mode `overwrite` if you do not use the option `truncate` , on recreation of the table indexes will be lost. For example a columnstore table would now be a heap. If you want to maintain existing indexing please also specify option `truncate` with value true. i.e .option("truncate",true)
