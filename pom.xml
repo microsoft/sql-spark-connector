@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.microsoft.sqlserver.jdbc.spark</groupId>
-    <artifactId>spark-mssql-connector_2.11</artifactId>
+    <groupId>com.microsoft.azure</groupId>
+    <artifactId>apache-spark-connector-sqlserver-azsql</artifactId>
     <packaging>jar</packaging>
-    <description>spark-mssql-connector</description>
+    <description>The Apache Spark Connector for SQL Server and Azure SQL is a high-performance connector that enables you to use transactional data in big data analytics and persists results for ad-hoc queries or reporting.</description>
     <version>1.0.0</version>
-    <name>spark-mssql-connector</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <organization>
-        <name>com.microsoft.sqlserver.jdbc.spark</name>
+        <name>com.microsoft.azure</name>
     </organization>
     <dependencies>
         <dependency>
