@@ -45,40 +45,38 @@ case class SQLServerBulkJdbcOptions(params: CaseInsensitiveMap[String])
   // A non-empty value indicates the name of a data source whose location is
   // the data pool that the user wants to write to. This data source will
   // contain the user's external table.
-  val dataPoolDataSource = params.getOrElse("dataPoolDataSource", null)
+  val dataPoolDataSource: String = params.getOrElse("dataPoolDataSource", null)
 
   // In the standard Spark JDBC implementation, the default isolation level is
   // "READ_UNCOMMITTED," but for SQL Server, the default is "READ_COMMITTED"
-  override val isolationLevel =
+  override val isolationLevel: Int =
     params.getOrElse("mssqlIsolationLevel", "READ_COMMITTED") match {
       case "READ_UNCOMMITTED" => Connection.TRANSACTION_READ_UNCOMMITTED
-      case "READ_COMMITTED"   => Connection.TRANSACTION_READ_COMMITTED
-      case "REPEATABLE_READ"  => Connection.TRANSACTION_REPEATABLE_READ
-      case "SERIALIZABLE"     => Connection.TRANSACTION_SERIALIZABLE
-      case "SNAPSHOT"         => Connection.TRANSACTION_READ_COMMITTED + 4094
+      case "READ_COMMITTED" => Connection.TRANSACTION_READ_COMMITTED
+      case "REPEATABLE_READ" => Connection.TRANSACTION_REPEATABLE_READ
+      case "SERIALIZABLE" => Connection.TRANSACTION_SERIALIZABLE
+      case "SNAPSHOT" => Connection.TRANSACTION_READ_COMMITTED + 4094
     }
 
-  val reliabilityLevel =
-    params.getOrElse("reliabilityLevel", "BEST_EFFORT") match {
-      case "BEST_EFFORT"   => SQLServerBulkJdbcOptions.BEST_EFFORT
-      case "NO_DUPLICATES" => SQLServerBulkJdbcOptions.NO_DUPLICATES
-    }
+  val reliabilityLevel: Int = params.getOrElse("reliabilityLevel", "BEST_EFFORT") match {
+    case "BEST_EFFORT" => SQLServerBulkJdbcOptions.BEST_EFFORT
+    case "NO_DUPLICATES" => SQLServerBulkJdbcOptions.NO_DUPLICATES
+  }
 
   // batchSize is already defined in JDBCOptions superclass
-  val checkConstraints = params.getOrElse("checkConstraints", "false").toBoolean
-  val fireTriggers = params.getOrElse("fireTriggers", "false").toBoolean
-  val keepIdentity = params.getOrElse("keepIdentity", "false").toBoolean
-  val keepNulls = params.getOrElse("keepNulls", "false").toBoolean
-  val tableLock = params.getOrElse("tableLock", "false").toBoolean
-  val allowEncryptedValueModifications =
+  val checkConstraints: Boolean = params.getOrElse("checkConstraints", "false").toBoolean
+  val fireTriggers: Boolean = params.getOrElse("fireTriggers", "false").toBoolean
+  val keepIdentity: Boolean = params.getOrElse("keepIdentity", "false").toBoolean
+  val keepNulls: Boolean = params.getOrElse("keepNulls", "false").toBoolean
+  val tableLock: Boolean = params.getOrElse("tableLock", "false").toBoolean
+  val allowEncryptedValueModifications: Boolean =
     params.getOrElse("allowEncryptedValueModifications", "false").toBoolean
 
   // Not a feature
   // Only used for internally testing data idempotency
-  val testDataIdempotency =
-    params.getOrElse("testDataIdempotency", "false").toBoolean
+  val testDataIdempotency: Boolean = params.getOrElse("testDataIdempotency", "false").toBoolean
 
-  val dataPoolDistPolicy = params.getOrElse("dataPoolDistPolicy", "ROUND_ROBIN")
+  val dataPoolDistPolicy: String = params.getOrElse("dataPoolDistPolicy", "ROUND_ROBIN")
 }
 
 object SQLServerBulkJdbcOptions {
