@@ -34,18 +34,13 @@ case class SQLServerBulkJdbcOptions(params: CaseInsensitiveMap[String])
   // Save original parameters for when a JdbcBulkOptions instance is passed
   // from the Spark driver to an executor, which loses the reference to the
   // params input in memory
-  override val parameters: CaseInsensitiveMap[String] = params
+  override val parameters = params
 
-  val dbtable: String = params.getOrElse("dbtable", null)
-  val databaseName: String = params.getOrElse("databaseName", null)
+  val dbtable = params.getOrElse("dbtable", null)
 
-  val user: String = params.getOrElse("user", null)
-  val password: String = params.getOrElse("password", null)
+  val user = params.getOrElse("user", null)
+  val password = params.getOrElse("password", null)
 
-  //  AAD Authentication
-  val accessToken: String = params.getOrElse("accessToken", null)
-  val encrypt: String = params.getOrElse("encrypt", null)
-  val hostNameInCertificate: String = params.getOrElse("hostNameInCertificate", null)
   // If no value is provided, then we write to a single SQL Server instance.
   // A non-empty value indicates the name of a data source whose location is
   // the data pool that the user wants to write to. This data source will
