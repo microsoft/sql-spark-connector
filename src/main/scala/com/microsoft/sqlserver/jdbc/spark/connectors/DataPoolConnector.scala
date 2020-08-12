@@ -40,14 +40,19 @@ import org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions
 object DataPoolConnector extends Connector with Logging with StrategyType {
   def getType(): String = SQLServerBulkJdbcOptions.DataPoolStrategy
 
-  override def writeInParallel(
-      df: DataFrame,
-      colMetaData: Array[ColumnMetadata],
-      options: SQLServerBulkJdbcOptions,
-      appId: String): Unit = {
-    paramOptions = options.params
-    ConnectorStrategyFactory.create(_: Connector).write(df, colMetaData, options, appId)
-  }
+    override def writeInParallel(
+        df: DataFrame,
+        colMetaData: Array[ColumnMetadata],
+        options: SQLServerBulkJdbcOptions,
+        appId: String ): Unit = {
+        if (options.reliabilityLevel == SQLServerBulkJdbcOptions.BEST_EFFORT) {
+            BestEffortDataPoolStrategy.write(df, colMetaData, options, appId)
+        }
+        else {
+            throw new SQLException(
+                s"""Invalid value for reliabilityLevel """)
+        }
+      }
 
   /*
    * createTable Data pool tables are SQL external table. This function
