@@ -24,18 +24,9 @@ package com.microsoft.sqlserver.jdbc.spark
 import java.sql.Connection
 
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
-<<<<<<< HEAD
-import org.apache.spark.sql.execution.datasources.jdbc.{
-  JDBCOptions,
-  JdbcOptionsInWrite
-}
-
-class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
-=======
 import org.apache.spark.sql.execution.datasources.jdbc.JdbcOptionsInWrite
 
 case class SQLServerBulkJdbcOptions(params: CaseInsensitiveMap[String])
->>>>>>> b948594... Consistency Updates
     extends JdbcOptionsInWrite(params) {
 
   def this(params: Map[String, String]) = this(CaseInsensitiveMap(params))
@@ -93,4 +84,6 @@ case class SQLServerBulkJdbcOptions(params: CaseInsensitiveMap[String])
 object SQLServerBulkJdbcOptions {
   val BEST_EFFORT = 0
   val NO_DUPLICATES = 1
+  val InstanceStrategy: String = "InstanceStrategy"
+  val DataPoolStrategy: String = "DataPoolStrategy"
 }

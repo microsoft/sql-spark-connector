@@ -42,19 +42,12 @@ object SingleInstanceConnector extends Connector with Logging with StrategyType 
   def getType(): String = SQLServerBulkJdbcOptions.InstanceStrategy
 
   override def writeInParallel(
-                 df: DataFrame,
-                 colMetaData: Array[ColumnMetadata],
-                 options: SQLServerBulkJdbcOptions,
-                 appId: String): Unit = {
-    if (options.reliabilityLevel == SQLServerBulkJdbcOptions.BEST_EFFORT) {
-      SingleInstanceWriteStrategies.write(df, colMetaData, options, appId)
-    }
-    else if(options.reliabilityLevel == SQLServerBulkJdbcOptions.NO_DUPLICATES) {
-      ReliableSingleInstanceStrategy.write(df, colMetaData, options, appId)
-    } else {
-      throw new SQLException(
-        s"""Invalid value for reliabilityLevel """)
-    }
+      df: DataFrame,
+      colMetaData: Array[ColumnMetadata],
+      options: SQLServerBulkJdbcOptions,
+      appId: String): Unit = {
+    paramOptions = options.params
+    ConnectorStrategyFactory.create(_: Connector).write(df, colMetaData, options, appId)
   }
 
   override def createTable(
