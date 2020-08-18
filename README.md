@@ -181,7 +181,7 @@ via pip.
 Please check the [sample notebooks](samples) for examples.
 
 # Support
-The Apache Spark Connector for Azure SQL and SQL Server is an open source project. This connector does not come with any Microsoft support unless it is being used within SQL Server Big Data Clusters. For issues with or questions about the connector, please create an Issue in this project repository. The connector community is active and monitoring submissions.
+The Apache Spark Connector for Azure SQL and SQL Server is an open source project. This connector does not come with any Microsoft support. For issues with or questions about the connector, please create an Issue in this project repository. The connector community is active and monitoring submissions.
 
 # Roadmap
 Visit the Connector project in the **Projects** tab to see needed / planned items. Feel free to make an issue and start contributing!
