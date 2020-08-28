@@ -67,6 +67,22 @@ Environment
 - Master + 6 nodes
 - Each node gen 5 server, 512GB Ram, 4TB NVM per node, NIC 10GB
 
+## Commonly Faced Issues
+### `java.lang.NoClassDefFoundError: com/microsoft/aad/adal4j/AuthenticationException`
+This issue arises from using an older version of the mssql driver (which is now included in this connector) in your hadoop environment. If you are coming from using the previous Azure SQL Connector and have manually installed drivers onto that cluster for AAD compatibility, you will need to remove those drivers.
+
+Steps to fix the issue:
+
+1. If you are using a generic Hadoop environment, check and remove the mssql jar: `rm $HADOOP_HOME/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar`. 
+If you are using Databricks, add a global or cluster init script to remove old versions of the mssql driver from the /databricks/jars folder, or add this line to an existing script: rm /databricks/jars/*mssql*
+2. Add the adal4j and mssql packages, I used Maven, but any way should work. DO NOT install the SQL spark connector this way.
+3. Add the driver class to your connection configuration:
+`connectionProperties = {
+  "Driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+}`
+
+For more information and explanation, visit the closed [issue](https://github.com/microsoft/sql-spark-connector/issues/26).
+
 ## Get Started
 The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark DataSourceV1 API and SQL Server Bulk API and uses the same interface as the built-in JDBC Spark-SQL connector. This allows you to easily integrate the connector and migrate your existing Spark jobs by simply updating the format parameter with `com.microsoft.sqlserver.jdbc.spark`.
 
