@@ -204,7 +204,7 @@ object BulkCopyUtils extends Logging {
         val colMetaData = {
             if(checkSchema) {
                 checkExTableType(conn, options)
-                matchSchemas(df, rs, options.url, isCaseSensitive)
+                matchSchemas(df, rs, options.url, isCaseSensitive, options.schemaCheckEnabled)
             } else {
                 defaultColMetadataMap(rs.getMetaData())
             }
@@ -227,13 +227,14 @@ object BulkCopyUtils extends Logging {
     * @param rs: ResultSet,
     * @param url: String,
     * @param isCaseSensitive: Boolean
-    *
+    * @param strictSchemaCheck: Boolean
     */
     private[spark] def matchSchemas(
             df: DataFrame,
             rs: ResultSet,
             url: String,
-            isCaseSensitive: Boolean): Array[ColumnMetadata]= {
+            isCaseSensitive: Boolean,
+            strictSchemaCheck: Boolean): Array[ColumnMetadata]= {
         val dfColCaseMap = (df.schema.fieldNames.map(item => item.toLowerCase)
           zip df.schema.fieldNames.toList).toMap
         val dfCols = df.schema
@@ -253,15 +254,18 @@ object BulkCopyUtils extends Logging {
             if (isCaseSensitive) {
                 dfFieldIndex = dfCols.fieldIndex(tableColName)
                 dfColName = dfCols(dfFieldIndex).name
-                assertCondition(tableColName == dfColName,
+                assertIfCheckEnabled(
+                    tableColName == dfColName, strictSchemaCheck,
                     s"""${prefix} column names '${tableColName}' and
-                        '${dfColName}' at column index ${i} (case sensitive)""")
+                     '${dfColName}' at column index ${i} (case sensitive)""")
             } else {
                 dfFieldIndex = dfCols.fieldIndex(dfColCaseMap(tableColName.toLowerCase()))
                 dfColName = dfCols(dfFieldIndex).name
-                assertCondition(tableColName.toLowerCase() == dfColName.toLowerCase(),
+                assertIfCheckEnabled(
+                    tableColName.toLowerCase() == dfColName.toLowerCase(),
+                    strictSchemaCheck,
                     s"""${prefix} column names '${tableColName}' and
-                        '${dfColName}' at column index ${i} (case insensitive)""")
+                    '${dfColName}' at column index ${i} (case insensitive)""")
             }
 
             logDebug(s"matching Df column index $dfFieldIndex datatype ${dfCols(dfFieldIndex).dataType} " +
@@ -273,11 +277,20 @@ object BulkCopyUtils extends Logging {
                 logDebug(s"Passing valid translation of ByteType to ShortType")
             }
             else {
-                assertCondition(dfCols(dfFieldIndex).dataType == tableCols(i).dataType,
-                    s"${prefix} column data types at column index ${i}")
+                assertIfCheckEnabled(
+                    dfCols(dfFieldIndex).dataType == tableCols(i).dataType,
+                    strictSchemaCheck,
+                    s"${prefix} column data types at column index ${i}." +
+                      s" DF col ${dfColName} dataType ${dfCols(dfFieldIndex).dataType} " +
+                      s" Table col ${tableColName} dataType ${tableCols(i).dataType} ")
             }
-            assertCondition(dfCols(dfFieldIndex).nullable == tableCols(i).nullable,
-                s"${prefix} column nullable configurations at column index ${i}")
+            assertIfCheckEnabled(
+                dfCols(dfFieldIndex).nullable == tableCols(i).nullable,
+                strictSchemaCheck,
+                s"${prefix} column nullable configurations at column index ${i}" +
+                  s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
+                  s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
+
 
             // Schema check passed for element, Create ColMetaData
             result(i) = new ColumnMetadata(
@@ -526,5 +539,22 @@ object BulkCopyUtils extends Logging {
                 throw new SQLException(msg)
             }
         }
+    }
+
+    /**
+     * utility to assert if checkEnabled is true, else info log the mesage
+     * @param cond - condition
+     * @param msg - message to pass in the SQLException
+     */
+
+    private def assertIfCheckEnabled(
+            cond: Boolean, checkEnabled : Boolean,  msg: String): Unit = {
+        if(checkEnabled) {
+            assertCondition(cond, msg)
+        }
+        else{
+           logInfo(msg)
+        }
+
     }
 }
