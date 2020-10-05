@@ -178,7 +178,7 @@ object BulkCopyUtils extends Logging {
         table: String): List[String] = {
         val queryStr = s"SELECT name FROM sys.computed_columns WHERE object_id = OBJECT_ID('${table}');"
         val computedColRs = conn.createStatement.executeQuery(queryStr)
-        var computedCols = ListBuffer[String]()
+        val computedCols = ListBuffer[String]()
         while (computedColRs.next()) {
             val colName = computedColRs.getString("name")
             computedCols.append(colName)
@@ -322,7 +322,7 @@ object BulkCopyUtils extends Logging {
                 }
 
                 logDebug(s"matching Df column index $dfFieldIndex datatype ${dfCols(dfFieldIndex).dataType} " +
-                s"to table col index $i datatype ${tableCols(i).dataType}")
+                    s"to table col index $i datatype ${tableCols(i).dataType}")
                 if(dfCols(dfFieldIndex).dataType == ByteType && tableCols(i).dataType == ShortType) {
                     // TinyInt translates to spark ShortType. Refer https://github.com/apache/spark/pull/27172
                     // Here we handle a case of writing a ByteType to SQL when Spark Core says that its a ShortType.
@@ -341,8 +341,8 @@ object BulkCopyUtils extends Logging {
                     dfCols(dfFieldIndex).nullable == tableCols(i).nullable,
                     strictSchemaCheck,
                     s"${prefix} column nullable configurations at column index ${i}" +
-                    s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
-                    s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
+                        s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
+                        s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
             }
 
             // Schema check passed for element, Create ColMetaData
