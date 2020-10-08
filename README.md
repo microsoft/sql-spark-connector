@@ -11,7 +11,7 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 ## About This Release
 
-This is a V1.2 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQLServer.
+This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQLServer.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
