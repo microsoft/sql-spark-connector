@@ -15,6 +15,8 @@ This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
+The connector is available on Maven: https://search.maven.org/search?q=spark-mssql-connector and can be imported using the coordinate `com.microsoft.azure:spark-mssql-connector:1.0.0`. All future releases will be made on Maven instead of in the GitHub releases section.
+
 ## Supported Features
 * Support for all Spark bindings (Scala, Python, R)
 * Basic authentication and Active Directory (AD) Key Tab support
