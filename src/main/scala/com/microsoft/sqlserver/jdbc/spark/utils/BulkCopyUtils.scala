@@ -203,150 +203,148 @@ object BulkCopyUtils extends Logging {
         metadata.isAutoIncrement(idx + 1),
         idx)
     }
+  }
 
-    /**
-     * getColMetadataMap
-     * Utility function convert result set meta data to array.
-     */
-    private[spark] def defaultColMetadataMap(
-            metadata: ResultSetMetaData): Array[ColumnMetadata] = {
-        val result = new Array[ColumnMetadata](metadata.getColumnCount)
-        for (idx <- 0 to metadata.getColumnCount-1) {
-            result(idx) = new ColumnMetadata(
-                metadata.getColumnName(idx+1),
-                metadata.getColumnType(idx+1),
-                metadata.getPrecision(idx+1),
-                metadata.getScale(idx+1),
-                metadata.isAutoIncrement(idx+1),
-                idx)
-        }
-        result
+  /**
+   * getColMetadataMap
+   * Utility function convert result set meta data to array.
+   */
+  private[spark] def defaultColMetadataMap(metadata: ResultSetMetaData): Array[ColumnMetadata] = {
+    val result = new Array[ColumnMetadata](metadata.getColumnCount)
+    for (idx <- 0 to metadata.getColumnCount - 1) {
+      result(idx) = new ColumnMetadata(
+        metadata.getColumnName(idx + 1),
+        metadata.getColumnType(idx + 1),
+        metadata.getPrecision(idx + 1),
+        metadata.getScale(idx + 1),
+        metadata.isAutoIncrement(idx + 1),
+        idx)
     }
+    result
+  }
 
-    /**
-     * getColMetaData returns the columnMetaData that's used when writing the data frame to SQL.
-     * Additionally it also supports a schema check between dataframe and sql table. The schema
-     * check validates the following
-     * 1. Number of columns
-     * 2. Type of columns (sql to spark data type mapping per JDBCUtils)
-     * 3. Names of columns
-     * @param df: DataFrame,
-     * @param conn: Connection,
-     * @param sqlContext: SQLContext,
-     * @param options: SQLServerBulkJdbcOptions,
-     * @param checkSchema: Boolean
-     */
-    private[spark] def getColMetaData(
-            df: DataFrame,
-            conn: Connection,
-            sqlContext: SQLContext,
-            options: SQLServerBulkJdbcOptions,
-            checkSchema: Boolean) :
-        Array[ColumnMetadata] = {
-        val isCaseSensitive = sqlContext.getConf("spark.sql.caseSensitive").toBoolean
-        val rs = getEmptyResultSet(conn, options.dbtable)
-        val colMetaData = {
-            if(checkSchema) {
-                checkExTableType(conn, options)
-                matchSchemas(df, rs, options.url, isCaseSensitive, options.schemaCheckEnabled)
-            } else {
-                defaultColMetadataMap(rs.getMetaData())
-            }
-        }
-        colMetaData
+  /**
+   * getColMetaData returns the columnMetaData that's used when writing the data frame to SQL.
+   * Additionally it also supports a schema check between dataframe and sql table. The schema
+   * check validates the following
+   * 1. Number of columns
+   * 2. Type of columns (sql to spark data type mapping per JDBCUtils)
+   * 3. Names of columns
+   * @param df: DataFrame,
+   * @param conn: Connection,
+   * @param sqlContext: SQLContext,
+   * @param options: SQLServerBulkJdbcOptions,
+   * @param checkSchema: Boolean
+   */
+  private[spark] def getColMetaData(
+      df: DataFrame,
+      conn: Connection,
+      sqlContext: SQLContext,
+      options: SQLServerBulkJdbcOptions,
+      checkSchema: Boolean): Array[ColumnMetadata] = {
+    val isCaseSensitive = sqlContext.getConf("spark.sql.caseSensitive").toBoolean
+    val rs = getEmptyResultSet(conn, options.dbtable)
+    val colMetaData = {
+      if (checkSchema) {
+        checkExTableType(conn, options)
+        matchSchemas(df, rs, options.url, isCaseSensitive, options.schemaCheckEnabled)
+      } else {
+        defaultColMetadataMap(rs.getMetaData())
+      }
     }
+    colMetaData
+  }
 
-    /**
-    * matchSchemas validates the data frame schema against result set of a
-    * SQL table that user is trying to write to. The SQL table is considered the source of truth
-    * and data frame columns matches against that. The data frame columns can be in a different
-    * order than the SQL table.
-    * Note that function does case-insensitive or case-sensitive check based on passed preference.
-    * isCaseSensitive as True  : data frame column name is expected have exactly the same case as sql column
-    * isCaseSensitive is False : data frame column name can have a different case than the sql column case
-    * note that both spark and sql should be configured with the same case settings
-    * i.e both CaseSensitive or both not CaseSensitive. In scenario where spark case settings is
-    * different this check may pass, but there will be an error at write.
-    * @param df: DataFrame,
-    * @param rs: ResultSet,
-    * @param url: String,
-    * @param isCaseSensitive: Boolean
-    * @param strictSchemaCheck: Boolean
-    */
-    private[spark] def matchSchemas(
-            df: DataFrame,
-            rs: ResultSet,
-            url: String,
-            isCaseSensitive: Boolean,
-            strictSchemaCheck: Boolean): Array[ColumnMetadata]= {
-        val dfColCaseMap = (df.schema.fieldNames.map(item => item.toLowerCase)
-          zip df.schema.fieldNames.toList).toMap
-        val dfCols = df.schema
+  /**
+   * matchSchemas validates the data frame schema against result set of a
+   * SQL table that user is trying to write to. The SQL table is considered the source of truth
+   * and data frame columns matches against that. The data frame columns can be in a different
+   * order than the SQL table.
+   * Note that function does case-insensitive or case-sensitive check based on passed preference.
+   * isCaseSensitive as True  : data frame column name is expected have exactly the same case as sql column
+   * isCaseSensitive is False : data frame column name can have a different case than the sql column case
+   * note that both spark and sql should be configured with the same case settings
+   * i.e both CaseSensitive or both not CaseSensitive. In scenario where spark case settings is
+   * different this check may pass, but there will be an error at write.
+   * @param df: DataFrame,
+   * @param rs: ResultSet,
+   * @param url: String,
+   * @param isCaseSensitive: Boolean
+   * @param strictSchemaCheck: Boolean
+   */
+  private[spark] def matchSchemas(
+      df: DataFrame,
+      rs: ResultSet,
+      url: String,
+      isCaseSensitive: Boolean,
+      strictSchemaCheck: Boolean): Array[ColumnMetadata] = {
+    val dfColCaseMap = (df.schema.fieldNames.map(item => item.toLowerCase)
+      zip df.schema.fieldNames.toList).toMap
+    val dfCols = df.schema
 
-        val tableCols = getSchema(rs, JdbcDialects.get(url))
-        val prefix = "Spark Dataframe and SQL Server table have differing"
+    val tableCols = getSchema(rs, JdbcDialects.get(url))
+    val prefix = "Spark Dataframe and SQL Server table have differing"
 
-        assertIfCheckEnabled(dfCols.length == tableCols.length, strictSchemaCheck,
-            s"${prefix} numbers of columns")
+    assertIfCheckEnabled(
+      dfCols.length == tableCols.length,
+      strictSchemaCheck,
+      s"${prefix} numbers of columns")
 
-        val result = new Array[ColumnMetadata](tableCols.length)
+    val result = new Array[ColumnMetadata](tableCols.length)
 
-        for (i <- 0 to tableCols.length-1) {
-            val tableColName = tableCols(i).name
-            var dfFieldIndex = 0
-            var dfColName:String = ""
-            if (isCaseSensitive) {
-                dfFieldIndex = dfCols.fieldIndex(tableColName)
-                dfColName = dfCols(dfFieldIndex).name
-                assertIfCheckEnabled(
-                    tableColName == dfColName, strictSchemaCheck,
-                    s"""${prefix} column names '${tableColName}' and
+    for (i <- 0 to tableCols.length - 1) {
+      val tableColName = tableCols(i).name
+      var dfFieldIndex = 0
+      var dfColName: String = ""
+      if (isCaseSensitive) {
+        dfFieldIndex = dfCols.fieldIndex(tableColName)
+        dfColName = dfCols(dfFieldIndex).name
+        assertIfCheckEnabled(
+          tableColName == dfColName,
+          strictSchemaCheck,
+          s"""${prefix} column names '${tableColName}' and
                      '${dfColName}' at column index ${i} (case sensitive)""")
-            } else {
-                dfFieldIndex = dfCols.fieldIndex(dfColCaseMap(tableColName.toLowerCase()))
-                dfColName = dfCols(dfFieldIndex).name
-                assertIfCheckEnabled(
-                    tableColName.toLowerCase() == dfColName.toLowerCase(),
-                    strictSchemaCheck,
-                    s"""${prefix} column names '${tableColName}' and
+      } else {
+        dfFieldIndex = dfCols.fieldIndex(dfColCaseMap(tableColName.toLowerCase()))
+        dfColName = dfCols(dfFieldIndex).name
+        assertIfCheckEnabled(
+          tableColName.toLowerCase() == dfColName.toLowerCase(),
+          strictSchemaCheck,
+          s"""${prefix} column names '${tableColName}' and
                     '${dfColName}' at column index ${i} (case insensitive)""")
-            }
+      }
 
-            logDebug(s"matching Df column index $dfFieldIndex datatype ${dfCols(dfFieldIndex).dataType} " +
-              s"to table col index $i datatype ${tableCols(i).dataType}")
-            if(dfCols(dfFieldIndex).dataType == ByteType && tableCols(i).dataType == ShortType) {
-                // TinyInt translates to spark ShortType. Refer https://github.com/apache/spark/pull/27172
-                // Here we handle a case of writing a ByteType to SQL when Spark Core says that its a ShortType.
-                // We can write a ByteType to ShortType and thus we pass that type checking.
-                logDebug(s"Passing valid translation of ByteType to ShortType")
-            }
-            else {
-                assertIfCheckEnabled(
-                    dfCols(dfFieldIndex).dataType == tableCols(i).dataType,
-                    strictSchemaCheck,
-                    s"${prefix} column data types at column index ${i}." +
-                      s" DF col ${dfColName} dataType ${dfCols(dfFieldIndex).dataType} " +
-                      s" Table col ${tableColName} dataType ${tableCols(i).dataType} ")
-            }
-            assertIfCheckEnabled(
-                dfCols(dfFieldIndex).nullable == tableCols(i).nullable,
-                strictSchemaCheck,
-                s"${prefix} column nullable configurations at column index ${i}" +
-                  s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
-                  s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
+      logDebug(
+        s"matching Df column index $dfFieldIndex datatype ${dfCols(dfFieldIndex).dataType} " +
+          s"to table col index $i datatype ${tableCols(i).dataType}")
+      if (dfCols(dfFieldIndex).dataType == ByteType && tableCols(i).dataType == ShortType) {
+        // TinyInt translates to spark ShortType. Refer https://github.com/apache/spark/pull/27172
+        // Here we handle a case of writing a ByteType to SQL when Spark Core says that its a ShortType.
+        // We can write a ByteType to ShortType and thus we pass that type checking.
+        logDebug(s"Passing valid translation of ByteType to ShortType")
+      } else {
+        assertIfCheckEnabled(
+          dfCols(dfFieldIndex).dataType == tableCols(i).dataType,
+          strictSchemaCheck,
+          s"${prefix} column data types at column index ${i}." +
+            s" DF col ${dfColName} dataType ${dfCols(dfFieldIndex).dataType} " +
+            s" Table col ${tableColName} dataType ${tableCols(i).dataType} ")
+      }
+      assertIfCheckEnabled(
+        dfCols(dfFieldIndex).nullable == tableCols(i).nullable,
+        strictSchemaCheck,
+        s"${prefix} column nullable configurations at column index ${i}" +
+          s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
+          s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
 
-
-            // Schema check passed for element, Create ColMetaData
-            result(i) = new ColumnMetadata(
-                rs.getMetaData().getColumnName(i+1),
-                rs.getMetaData().getColumnType(i+1),
-                rs.getMetaData().getPrecision(i+1),
-                rs.getMetaData().getScale(i+1),
-                rs.getMetaData().isAutoIncrement(i+1),
-                dfFieldIndex
-            )
-        }
-        result
+      // Schema check passed for element, Create ColMetaData
+      result(i) = new ColumnMetadata(
+        rs.getMetaData().getColumnName(i + 1),
+        rs.getMetaData().getColumnType(i + 1),
+        rs.getMetaData().getPrecision(i + 1),
+        rs.getMetaData().getScale(i + 1),
+        rs.getMetaData().isAutoIncrement(i + 1),
+        dfFieldIndex)
     }
     result
   }
@@ -573,21 +571,19 @@ object BulkCopyUtils extends Logging {
       case e: AssertionError =>
         throw new SQLException(msg)
     }
+  }
 
-    /**
-     * utility to assert if checkEnabled is true, else info log the mesage
-     * @param cond - condition
-     * @param msg - message to pass in the SQLException
-     */
-
-    private def assertIfCheckEnabled(
-            cond: Boolean, checkEnabled : Boolean,  msg: String): Unit = {
-        if(checkEnabled) {
-            assertCondition(cond, msg)
-        }
-        else{
-           logInfo(msg)
-        }
-
+  /**
+   * utility to assert if checkEnabled is true, else info log the mesage
+   * @param cond - condition
+   * @param msg - message to pass in the SQLException
+   */
+  private def assertIfCheckEnabled(cond: Boolean, checkEnabled: Boolean, msg: String): Unit = {
+    if (checkEnabled) {
+      assertCondition(cond, msg)
+    } else {
+      logInfo(msg)
     }
+
+  }
 }
