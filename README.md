@@ -15,6 +15,8 @@ This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
+The connector is available on Maven: https://search.maven.org/search?q=spark-mssql-connector and can be imported using the coordinate `com.microsoft.azure:spark-mssql-connector:1.0.0`. All future releases will be made on Maven instead of in the GitHub releases section.
+
 ## Supported Features
 * Support for all Spark bindings (Scala, Python, R)
 * Basic authentication and Active Directory (AD) Key Tab support
@@ -43,6 +45,7 @@ In addition following options are supported
 | dataPoolDataSource | none | none implies the value is not set and the connector should write to SQl Server Single Instance. Set this value to data source name to write a Data Pool Table in Big Data Cluster|
 | isolationLevel | "READ_COMMITTED" | Specify the isolation level |
 | tableLock | "false" | Implements an insert with TABLOCK option to improve write performance |
+| schemaCheckEnabled | "true" | Disables strict dataframe and sql table schema check when set to false |
 
 Other [Bulk api options](https://docs.microsoft.com/en-us/sql/connect/jdbc/using-bulk-copy-with-the-jdbc-driver?view=sql-server-2017#sqlserverbulkcopyoptions) can be set as options on the dataframe and will be passed to bulkcopy apis on write
 
@@ -66,6 +69,22 @@ Environment
 - [SQL Server Big Data Cluster](https://docs.microsoft.com/en-us/sql/big-data-cluster/release-notes-big-data-cluster?view=sql-server-ver15) CU5
 - Master + 6 nodes
 - Each node gen 5 server, 512GB Ram, 4TB NVM per node, NIC 10GB
+
+## Commonly Faced Issues
+### `java.lang.NoClassDefFoundError: com/microsoft/aad/adal4j/AuthenticationException`
+This issue arises from using an older version of the mssql driver (which is now included in this connector) in your hadoop environment. If you are coming from using the previous Azure SQL Connector and have manually installed drivers onto that cluster for AAD compatibility, you will need to remove those drivers.
+
+Steps to fix the issue:
+
+1. If you are using a generic Hadoop environment, check and remove the mssql jar: `rm $HADOOP_HOME/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar`. 
+If you are using Databricks, add a global or cluster init script to remove old versions of the mssql driver from the /databricks/jars folder, or add this line to an existing script: rm /databricks/jars/*mssql*
+2. Add the adal4j and mssql packages, I used Maven, but any way should work. DO NOT install the SQL spark connector this way.
+3. Add the driver class to your connection configuration:
+`connectionProperties = {
+  "Driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+}`
+
+For more information and explanation, visit the closed [issue](https://github.com/microsoft/sql-spark-connector/issues/26).
 
 ## Get Started
 The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark DataSourceV1 API and SQL Server Bulk API and uses the same interface as the built-in JDBC Spark-SQL connector. This allows you to easily integrate the connector and migrate your existing Spark jobs by simply updating the format parameter with `com.microsoft.sqlserver.jdbc.spark`.
@@ -181,7 +200,7 @@ via pip.
 Please check the [sample notebooks](samples) for examples.
 
 # Support
-The Apache Spark Connector for Azure SQL and SQL Server is an open source project. This connector does not come with any Microsoft support unless it is being used within SQL Server Big Data Clusters. For issues with or questions about the connector, please create an Issue in this project repository. The connector community is active and monitoring submissions.
+The Apache Spark Connector for Azure SQL and SQL Server is an open source project. This connector does not come with any Microsoft support. For issues with or questions about the connector, please create an Issue in this project repository. The connector community is active and monitoring submissions.
 
 # Roadmap
 Visit the Connector project in the **Projects** tab to see needed / planned items. Feel free to make an issue and start contributing!
