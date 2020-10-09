@@ -203,23 +203,6 @@ object BulkCopyUtils extends Logging {
         metadata.isAutoIncrement(idx + 1),
         idx)
     }
-  }
-
-  /**
-   * getColMetadataMap
-   * Utility function convert result set meta data to array.
-   */
-  private[spark] def defaultColMetadataMap(metadata: ResultSetMetaData): Array[ColumnMetadata] = {
-    val result = new Array[ColumnMetadata](metadata.getColumnCount)
-    for (idx <- 0 to metadata.getColumnCount - 1) {
-      result(idx) = new ColumnMetadata(
-        metadata.getColumnName(idx + 1),
-        metadata.getColumnType(idx + 1),
-        metadata.getPrecision(idx + 1),
-        metadata.getScale(idx + 1),
-        metadata.isAutoIncrement(idx + 1),
-        idx)
-    }
     result
   }
 
