@@ -187,6 +187,29 @@ object BulkCopyUtils extends Logging {
     }
 
     /**
+     * dfComputedColCount
+     * utility function to get number of computed columns in dataframe.
+     * Use number of computed columns in dataframe to get number of non computed column in df,
+     * and compare with the number of non computed column in sql table
+     */
+    private[spark] def dfComputedColCount(
+        dfColNames: List[String],
+        computedCols: List[String],
+        dfColCaseMap: Map[String, String],
+        isCaseSensitive: Boolean): Int ={
+        var dfComputedColCt = 0
+        for (j <- 0 to computedCols.length-1){
+            if (isCaseSensitive && dfColNames.contains(computedCols(j)) ||
+              !isCaseSensitive && dfColCaseMap.contains(computedCols(j).toLowerCase())
+                && dfColCaseMap(computedCols(j).toLowerCase()) == computedCols(j)) {
+                dfComputedColCt += 1
+            }
+        }
+        dfComputedColCt
+    }
+
+
+    /**
      * getColMetadataMap
      * Utility function convert result set meta data to array.
      */
@@ -278,16 +301,12 @@ object BulkCopyUtils extends Logging {
             assertIfCheckEnabled(dfCols.length == tableCols.length, strictSchemaCheck,
                 s"${prefix} numbers of columns")
         } else if (strictSchemaCheck) {
-            // if df has computed column(s), check column length using non computed column in df and table.
             val dfColNames =  df.schema.fieldNames.toList
-            var colCount = 0
-            for (j <- 0 to computedCols.length-1){
-                if (isCaseSensitive && dfColNames.contains(computedCols(j)) ||
-                  !isCaseSensitive && dfColCaseMap.contains(computedCols(j).toLowerCase()) && dfColCaseMap(computedCols(j).toLowerCase()) == computedCols(j)) {
-                    colCount += 1
-                }
-            }
-            assertIfCheckEnabled(dfCols.length-colCount+computedCols.length == tableCols.length, strictSchemaCheck,
+            val dfComputedColCt = dfComputedColCount(dfColNames, computedCols, dfColCaseMap, isCaseSensitive)
+            // if df has computed column(s), check column length using non computed column in df and table.
+            // non computed column number in df: dfCols.length - dfComputedColCt
+            // non computed column number in table: tableCols.length - computedCols.length
+            assertIfCheckEnabled(dfCols.length-dfComputedColCt == tableCols.length-computedCols.length, strictSchemaCheck,
                 s"${prefix} numbers of columns")
         }
 
