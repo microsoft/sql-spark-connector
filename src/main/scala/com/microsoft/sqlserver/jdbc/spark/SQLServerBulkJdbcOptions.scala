@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2020 Microsoft Corporation
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -69,7 +68,6 @@ case class SQLServerBulkJdbcOptions(params: CaseInsensitiveMap[String])
   val tableLock: Boolean = params.getOrElse("tableLock", "false").toBoolean
   val allowEncryptedValueModifications: Boolean =
     params.getOrElse("allowEncryptedValueModifications", "false").toBoolean
-
 
   val schemaCheckEnabled =
     params.getOrElse("schemaCheckEnabled", "true").toBoolean
