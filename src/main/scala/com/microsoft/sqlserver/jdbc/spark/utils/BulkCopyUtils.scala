@@ -38,6 +38,8 @@ import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{
 import org.apache.spark.sql.jdbc.JdbcDialects
 import org.apache.spark.sql.types.{ByteType, ShortType}
 
+import scala.collection.mutable.ListBuffer
+
 /**
  * BulkCopyUtils Object implements common utility function used by both datapool and
  */
