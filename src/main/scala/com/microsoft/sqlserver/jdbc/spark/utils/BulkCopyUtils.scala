@@ -9,6 +9,8 @@ import org.apache.spark.sql.jdbc.JdbcDialects
 import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{createConnectionFactory, getSchema, schemaString}
 import com.microsoft.sqlserver.jdbc.{SQLServerBulkCopy, SQLServerBulkCopyOptions}
 
+import scala.collection.mutable.ListBuffer
+
 /**
 * BulkCopyUtils Object implements common utility function used by both datapool and 
 */
@@ -87,6 +89,12 @@ object BulkCopyUtils extends Logging {
         sqlServerBulkCopy.setBulkCopyOptions(bulkConfig)
         sqlServerBulkCopy.setDestinationTableName(tableName)
 
+        for (i <- 0 to dfColMetadata.length-1) {
+            if (!dfColMetadata(i).isAutoIncrement()){
+                sqlServerBulkCopy.addColumnMapping(dfColMetadata(i).getName(), dfColMetadata(i).getName())
+            }
+        }
+
         val bulkRecord = new DataFrameBulkRecord(iterator, dfColMetadata)
         sqlServerBulkCopy.writeToServer(bulkRecord)
     }
@@ -161,6 +169,47 @@ object BulkCopyUtils extends Logging {
     }
 
     /**
+    * getComputedCols
+    * utility function to get computed columns.
+     * Use computed column names to exclude computed column when matching schema.
+    */
+    private[spark] def getComputedCols(
+        conn: Connection, 
+        table: String): List[String] = {
+        val queryStr = s"SELECT name FROM sys.computed_columns WHERE object_id = OBJECT_ID('${table}');"
+        val computedColRs = conn.createStatement.executeQuery(queryStr)
+        val computedCols = ListBuffer[String]()
+        while (computedColRs.next()) {
+            val colName = computedColRs.getString("name")
+            computedCols.append(colName)
+        }
+        computedCols.toList
+    }
+
+    /**
+     * dfComputedColCount
+     * utility function to get number of computed columns in dataframe.
+     * Use number of computed columns in dataframe to get number of non computed column in df,
+     * and compare with the number of non computed column in sql table
+     */
+    private[spark] def dfComputedColCount(
+        dfColNames: List[String],
+        computedCols: List[String],
+        dfColCaseMap: Map[String, String],
+        isCaseSensitive: Boolean): Int ={
+        var dfComputedColCt = 0
+        for (j <- 0 to computedCols.length-1){
+            if (isCaseSensitive && dfColNames.contains(computedCols(j)) ||
+              !isCaseSensitive && dfColCaseMap.contains(computedCols(j).toLowerCase())
+                && dfColCaseMap(computedCols(j).toLowerCase()) == computedCols(j)) {
+                dfComputedColCt += 1
+            }
+        }
+        dfComputedColCt
+    }
+
+
+    /**
      * getColMetadataMap
      * Utility function convert result set meta data to array.
      */
@@ -204,7 +253,7 @@ object BulkCopyUtils extends Logging {
         val colMetaData = {
             if(checkSchema) {
                 checkExTableType(conn, options)
-                matchSchemas(df, rs, options.url, isCaseSensitive, options.schemaCheckEnabled)
+                matchSchemas(conn, options.dbtable, df, rs, options.url, isCaseSensitive, options.schemaCheckEnabled)
             } else {
                 defaultColMetadataMap(rs.getMetaData())
             }
@@ -223,6 +272,8 @@ object BulkCopyUtils extends Logging {
     * note that both spark and sql should be configured with the same case settings
     * i.e both CaseSensitive or both not CaseSensitive. In scenario where spark case settings is
     * different this check may pass, but there will be an error at write.
+    * @param conn: Connection,
+    * @param dbtable: String,
     * @param df: DataFrame,
     * @param rs: ResultSet,
     * @param url: String,
@@ -230,6 +281,8 @@ object BulkCopyUtils extends Logging {
     * @param strictSchemaCheck: Boolean
     */
     private[spark] def matchSchemas(
+            conn: Connection,
+            dbtable: String,
             df: DataFrame,
             rs: ResultSet,
             url: String,
@@ -240,57 +293,76 @@ object BulkCopyUtils extends Logging {
         val dfCols = df.schema
 
         val tableCols = getSchema(rs, JdbcDialects.get(url))
+        val computedCols = getComputedCols(conn, dbtable)
+
         val prefix = "Spark Dataframe and SQL Server table have differing"
 
-        assertIfCheckEnabled(dfCols.length == tableCols.length, strictSchemaCheck,
-            s"${prefix} numbers of columns")
+        if (computedCols.length == 0) {
+            assertIfCheckEnabled(dfCols.length == tableCols.length, strictSchemaCheck,
+                s"${prefix} numbers of columns")
+        } else if (strictSchemaCheck) {
+            val dfColNames =  df.schema.fieldNames.toList
+            val dfComputedColCt = dfComputedColCount(dfColNames, computedCols, dfColCaseMap, isCaseSensitive)
+            // if df has computed column(s), check column length using non computed column in df and table.
+            // non computed column number in df: dfCols.length - dfComputedColCt
+            // non computed column number in table: tableCols.length - computedCols.length
+            assertIfCheckEnabled(dfCols.length-dfComputedColCt == tableCols.length-computedCols.length, strictSchemaCheck,
+                s"${prefix} numbers of columns")
+        }
+
 
         val result = new Array[ColumnMetadata](tableCols.length)
 
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
-            var dfFieldIndex = 0
-            var dfColName:String = ""
-            if (isCaseSensitive) {
-                dfFieldIndex = dfCols.fieldIndex(tableColName)
-                dfColName = dfCols(dfFieldIndex).name
-                assertIfCheckEnabled(
-                    tableColName == dfColName, strictSchemaCheck,
-                    s"""${prefix} column names '${tableColName}' and
-                     '${dfColName}' at column index ${i} (case sensitive)""")
-            } else {
-                dfFieldIndex = dfCols.fieldIndex(dfColCaseMap(tableColName.toLowerCase()))
-                dfColName = dfCols(dfFieldIndex).name
-                assertIfCheckEnabled(
-                    tableColName.toLowerCase() == dfColName.toLowerCase(),
-                    strictSchemaCheck,
-                    s"""${prefix} column names '${tableColName}' and
-                    '${dfColName}' at column index ${i} (case insensitive)""")
-            }
+            var dfFieldIndex = -1
+            var isAutoIncrement = false
+            if (computedCols.contains(tableColName)) {
+                // set dfFieldIndex = -1 and isAutoIncrement = true for all computed columns to skip bulk copy mapping
+                isAutoIncrement = true
+                logDebug(s"skipping computed col index $i col name $tableColName dfFieldIndex $dfFieldIndex")
+            }else{
+                var dfColName:String = ""
+                if (isCaseSensitive) {
+                    dfFieldIndex = dfCols.fieldIndex(tableColName)
+                    dfColName = dfCols(dfFieldIndex).name
+                    assertIfCheckEnabled(
+                        tableColName == dfColName, strictSchemaCheck,
+                        s"""${prefix} column names '${tableColName}' and
+                        '${dfColName}' at column index ${i} (case sensitive)""")
+                } else {
+                    dfFieldIndex = dfCols.fieldIndex(dfColCaseMap(tableColName.toLowerCase()))
+                    dfColName = dfCols(dfFieldIndex).name
+                    assertIfCheckEnabled(
+                        tableColName.toLowerCase() == dfColName.toLowerCase(),
+                        strictSchemaCheck,
+                        s"""${prefix} column names '${tableColName}' and
+                        '${dfColName}' at column index ${i} (case insensitive)""")
+                }
 
-            logDebug(s"matching Df column index $dfFieldIndex datatype ${dfCols(dfFieldIndex).dataType} " +
-              s"to table col index $i datatype ${tableCols(i).dataType}")
-            if(dfCols(dfFieldIndex).dataType == ByteType && tableCols(i).dataType == ShortType) {
-                // TinyInt translates to spark ShortType. Refer https://github.com/apache/spark/pull/27172
-                // Here we handle a case of writing a ByteType to SQL when Spark Core says that its a ShortType.
-                // We can write a ByteType to ShortType and thus we pass that type checking.
-                logDebug(s"Passing valid translation of ByteType to ShortType")
-            }
-            else {
+                logDebug(s"matching Df column index $dfFieldIndex datatype ${dfCols(dfFieldIndex).dataType} " +
+                    s"to table col index $i datatype ${tableCols(i).dataType}")
+                if(dfCols(dfFieldIndex).dataType == ByteType && tableCols(i).dataType == ShortType) {
+                    // TinyInt translates to spark ShortType. Refer https://github.com/apache/spark/pull/27172
+                    // Here we handle a case of writing a ByteType to SQL when Spark Core says that its a ShortType.
+                    // We can write a ByteType to ShortType and thus we pass that type checking.
+                    logDebug(s"Passing valid translation of ByteType to ShortType")
+                }
+                else {
+                    assertIfCheckEnabled(
+                        dfCols(dfFieldIndex).dataType == tableCols(i).dataType,
+                        strictSchemaCheck,
+                        s"${prefix} column data types at column index ${i}." +
+                        s" DF col ${dfColName} dataType ${dfCols(dfFieldIndex).dataType} " +
+                        s" Table col ${tableColName} dataType ${tableCols(i).dataType} ")
+                }
                 assertIfCheckEnabled(
-                    dfCols(dfFieldIndex).dataType == tableCols(i).dataType,
+                    dfCols(dfFieldIndex).nullable == tableCols(i).nullable,
                     strictSchemaCheck,
-                    s"${prefix} column data types at column index ${i}." +
-                      s" DF col ${dfColName} dataType ${dfCols(dfFieldIndex).dataType} " +
-                      s" Table col ${tableColName} dataType ${tableCols(i).dataType} ")
+                    s"${prefix} column nullable configurations at column index ${i}" +
+                        s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
+                        s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
             }
-            assertIfCheckEnabled(
-                dfCols(dfFieldIndex).nullable == tableCols(i).nullable,
-                strictSchemaCheck,
-                s"${prefix} column nullable configurations at column index ${i}" +
-                  s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
-                  s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
-
 
             // Schema check passed for element, Create ColMetaData
             result(i) = new ColumnMetadata(
@@ -298,7 +370,7 @@ object BulkCopyUtils extends Logging {
                 rs.getMetaData().getColumnType(i+1),
                 rs.getMetaData().getPrecision(i+1),
                 rs.getMetaData().getScale(i+1),
-                rs.getMetaData().isAutoIncrement(i+1),
+                isAutoIncrement,
                 dfFieldIndex
             )
         }
