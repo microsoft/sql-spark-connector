@@ -1,4 +1,4 @@
- /*
+/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,32 +16,19 @@
  * limitations under the License.
  */
 
-package com.microsoft.sqlserver.jdbc.spark;
+package com.microsoft.sqlserver.jdbc.spark.connectors
 
+import com.microsoft.sqlserver.jdbc.spark.{ColumnMetadata, SQLServerBulkJdbcOptions}
 
-import javax.transaction.xa.Xid;
+import org.apache.spark.sql.DataFrame
 
-public class MyXidImpl implements Xid {
+object NullConnectorStrategy extends DataIOStrategy with ConnectorStrategy with StrategyType {
 
-    public int formatId;
-    public byte[] gtrid;
-    public byte[] bqual;
-
-    public int getFormatId() {
-        return formatId;
-    }
-
-    public byte[] getGlobalTransactionId() {
-        return gtrid;
-    }
-
-    public byte[] getBranchQualifier() {
-        return bqual;
-    }
-
-    public MyXidImpl(int formatId, byte[] gtrid, byte[] bqual) {
-        this.formatId = formatId;
-        this.gtrid = gtrid;
-        this.bqual = bqual;
-    }
+  def getType(): String = SQLServerBulkJdbcOptions.InstanceStrategy
+  def write(
+      df: DataFrame,
+      dfColMetaData: Array[ColumnMetadata],
+      options: SQLServerBulkJdbcOptions,
+      appId: String): Unit = {}
+  override def strategy(): Int = -1
 }
