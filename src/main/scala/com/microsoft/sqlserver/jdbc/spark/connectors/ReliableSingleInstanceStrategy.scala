@@ -189,7 +189,7 @@ object ReliableSingleInstanceStrategy
    */
   private def getStagingTableName(appId: String, index: Int): String = {
     // Global table names in SQLServer are prefixed with ##
-    s"##" + s"$appId" + s"_$index"
+    s"[##${appId}_${index}]"
   }
 
   /**
