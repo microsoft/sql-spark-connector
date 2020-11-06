@@ -11,7 +11,7 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 ## About This Release
 
-This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQLServer.
+This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQL Server.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
@@ -61,9 +61,9 @@ Apache Spark Connector for SQL Server and Azure SQL is up to 15x faster than gen
 | sql-spark-connector | NO_DUPLICATES + tabLock=true| Reliable sql-spark-connector with table lock enabled| 198s |
 
 Config
-- Spark config : num_executors = 20, executor_memory = '1664m', executor_cores = 2
-- Data Gen config : scale_factor=50, partitioned_tables=true
-- Data file Store_sales with nr of rows 143,997,590
+- Spark config : `num_executors = 20`, `executor_memory = '1664m'`, `executor_cores = 2`
+- Data Gen config : `scale_factor=50`, `partitioned_tables=true`
+- Data file Store_sales with number of of rows 143,997,590
 
 Environment
 - [SQL Server Big Data Cluster](https://docs.microsoft.com/en-us/sql/big-data-cluster/release-notes-big-data-cluster?view=sql-server-ver15) CU5
@@ -71,28 +71,35 @@ Environment
 - Each node gen 5 server, 512GB Ram, 4TB NVM per node, NIC 10GB
 
 ## Commonly Faced Issues
+
 ### `java.lang.NoClassDefFoundError: com/microsoft/aad/adal4j/AuthenticationException`
+
 This issue arises from using an older version of the mssql driver (which is now included in this connector) in your hadoop environment. If you are coming from using the previous Azure SQL Connector and have manually installed drivers onto that cluster for AAD compatibility, you will need to remove those drivers.
 
 Steps to fix the issue:
 
 1. If you are using a generic Hadoop environment, check and remove the mssql jar: `rm $HADOOP_HOME/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar`. 
-If you are using Databricks, add a global or cluster init script to remove old versions of the mssql driver from the /databricks/jars folder, or add this line to an existing script: rm /databricks/jars/*mssql*
-2. Add the adal4j and mssql packages, I used Maven, but any way should work. DO NOT install the SQL spark connector this way.
+If you are using Databricks, add a global or cluster init script to remove old versions of the mssql driver from the `/databricks/jars` folder, or add this line to an existing script: `rm /databricks/jars/*mssql*`
+2. Add the `adal4j` and `mssql` packages, I used Maven, but anyway should work. DO NOT install the SQL spark connector this way.
 3. Add the driver class to your connection configuration:
-`connectionProperties = {
+
+```
+connectionProperties = {
   "Driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-}`
+}
+```
 
 For more information and explanation, visit the closed [issue](https://github.com/microsoft/sql-spark-connector/issues/26).
 
 ## Get Started
+
 The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark DataSourceV1 API and SQL Server Bulk API and uses the same interface as the built-in JDBC Spark-SQL connector. This allows you to easily integrate the connector and migrate your existing Spark jobs by simply updating the format parameter with `com.microsoft.sqlserver.jdbc.spark`.
 
 To include the connector in your projects download this repository and build the jar using SBT.
 
 ### Migrating from Legacy Azure SQL Connector for Spark
-####Receiving `java.lang.NoClassDefFoundError` when trying to use the new connector with Azure Databricks?
+
+#### Receiving `java.lang.NoClassDefFoundError` when trying to use the new connector with Azure Databricks?
 
 If you are migrating from the previous Azure SQL Connector for Spark and have manually installed drivers onto that cluster for AAD compatibility, you will most likely need to remove those custom drivers, restore the previous drivers that ship by default with Databricks, uninstall the previous connector, and restart your cluster.  You may be better off spinning up a new cluster. 
 
@@ -102,8 +109,13 @@ See [Issue #26](https://github.com/microsoft/sql-spark-connector/issues/26) for 
 
 
 ### Write to a new SQL Table
-#### Important: using the `overwrite` mode will first DROP the table if it already exists in the database by default. Please use this option with due care to avoid unexpected data loss!
-### When using mode `overwrite` if you do not use the option `truncate` , on recreation of the table indexes will be lost. For example a columnstore table would now be a heap. If you want to maintain existing indexing please also specify option `truncate` with value true. i.e .option("truncate",true)
+
+:warning: **Important: using the `overwrite` mode will first DROP the table if it already exists in the database by default. Please use this option with due care to avoid unexpected data loss!**
+
+
+:warning: **When using mode `overwrite` if you do not use the option `truncate`, on recreation of the table indexes will be lost. For example a columnstore table would now be a heap. If you want to maintain existing indexing please also specify option `truncate` with value true. i.e `.option("truncate",true)`**
+
+
 ```python
 server_name = "jdbc:sqlserver://{SERVER_ADDR}"
 database_name = "database_name"
@@ -142,7 +154,7 @@ except ValueError as error :
 ```
 
 ### Specifying the isolation level
-This connector by default uses READ_COMMITTED isolation level when performing the bulk insert into the database. If you wish to override this to another isolation level, please use the `mssqlIsolationLevel` option as shown below.
+This connector by default uses `READ_COMMITTED` isolation level when performing the bulk insert into the database. If you wish to override this to another isolation level, please use the `mssqlIsolationLevel` option as shown below.
 ```python
     .option("mssqlIsolationLevel", "READ_UNCOMMITTED") \
 ```
@@ -159,7 +171,7 @@ jdbcDF = spark.read \
 
 ### Azure Active Directory Authentication
 
-**Python Example with Service Principal**
+#### Python Example with Service Principal
 ```python
 context = adal.AuthenticationContext(authority)
 token = context.acquire_token_with_client_credentials(resource_app_id_url, service_principal_id, service_principal_secret)
@@ -175,7 +187,7 @@ jdbc_db = spark.read \
         .load()
 ```
 
-**Python Example with Active Directory Password**
+#### Python Example with Active Directory Password
 ```python
 jdbc_df = spark.read \
         .format("com.microsoft.sqlserver.jdbc.spark") \
@@ -188,12 +200,13 @@ jdbc_df = spark.read \
         .option("hostNameInCertificate", "*.database.windows.net") \
         .load()
 ```
+
 A required dependency must be installed in order to authenticate using
 Active Directory.
 
-For **Scala,** the _com.microsoft.aad.adal4j_ artifact will need to be installed.
+For **Scala,** the `com.microsoft.aad.adal4j` artifact will need to be installed.
 
-For **Python,** the _adal_ library will need to be installed.  This is available 
+For **Python,** the `adal` library will need to be installed.  This is available 
 via pip.
 
 
