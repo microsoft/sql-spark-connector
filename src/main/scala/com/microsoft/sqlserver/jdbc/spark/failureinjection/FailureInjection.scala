@@ -1,30 +1,12 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package com.microsoft.sqlserver.jdbc.spark
 
-package com.microsoft.sqlserver.jdbc.spark.failureinjection
-
-import com.microsoft.sqlserver.jdbc.spark.SQLServerBulkJdbcOptions
-
+import com.microsoft.sqlserver.jdbc.spark.DataPoolUtils.logDebug
 import org.apache.spark.internal.Logging
 
 /**
- * Failure injection to randomly restart the executors.
+ * Failure injection to to randomly restart the executors.
  */
+
 object FailureInjection extends Logging {
   val simulatedFailureRate = 0.03 // fail 1 in 30 times
   val seed = System.nanoTime()
@@ -40,7 +22,7 @@ object FailureInjection extends Logging {
       logDebug(s"FailureInjection: testDataIdempotency is set to True")
       logDebug(s"FailureInjection: seed used is $seed")
 
-      val nextRandom = r.nextFloat()
+      val nextRandom = r. nextFloat()
       logDebug(s"FailureInjection: Generated random number is $nextRandom")
       if (nextRandom <= simulatedFailureRate) {
         logDebug("FailureInjection: Forced a crash")

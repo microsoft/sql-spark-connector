@@ -92,7 +92,7 @@ The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark Da
 To include the connector in your projects download this repository and build the jar using SBT.
 
 ### Migrating from Legacy Azure SQL Connector for Spark
-####Receiving `java.lang.NoClassDefFoundError` when trying to use the new connector with Azure Databricks?
+#### Receiving `java.lang.NoClassDefFoundError` when trying to use the new connector with Azure Databricks?
 
 If you are migrating from the previous Azure SQL Connector for Spark and have manually installed drivers onto that cluster for AAD compatibility, you will most likely need to remove those custom drivers, restore the previous drivers that ship by default with Databricks, uninstall the previous connector, and restart your cluster.  You may be better off spinning up a new cluster. 
 
