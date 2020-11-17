@@ -42,10 +42,15 @@ object BulkCopyUtils extends Logging {
         try {
             logDebug("savePartition: Calling SQL Bulk Copy to write data")
             val sqlServerBulkCopy = new SQLServerBulkCopy(conn)
+            val t1 = System.currentTimeMillis()            
             bulkWrite(iterator, tableName, sqlServerBulkCopy, dfColMetadata, options)
+            logInfo(s"savePartition : Time to bulkWrite ${System.currentTimeMillis() - t1} ")
+            println(s"savePartition : Time to bulkWrite ${System.currentTimeMillis() - t1} ")
 
             conn.commit()
             committed = true
+            logInfo(s"savePartition : Time to commit record ${System.currentTimeMillis() - t1} ")
+            println(s"savePartition : Time to commit record ${System.currentTimeMillis() - t1} ")
         } catch {
             case e: SQLException =>
                 handleException(e)

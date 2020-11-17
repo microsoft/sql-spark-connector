@@ -24,9 +24,17 @@ object SingleInstanceWriteStrategies extends DataIOStrategy with Logging {
          options: SQLServerBulkJdbcOptions,
          appId: String): Unit = {
       logInfo("write : best effort write to single instance called")
+      val t1 = System.currentTimeMillis()                                   
       //val dfColMetadata: Array[ColumnMetadata] = getColMetadataMap(metadata)
       val dfColMetadata = colMetaData
       df.rdd.foreachPartition(iterator =>
-        savePartition(iterator, options.dbtable, dfColMetadata, options))
+       {    
+          val t1 = System.currentTimeMillis()                                   
+          savePartition(iterator, options.dbtable, dfColMetadata, options)
+          logInfo(s"write : Time to savePartition ${System.currentTimeMillis() - t1} ")
+          println(s"write : Time to savePartition ${System.currentTimeMillis() - t1} ")
+      })
+      logInfo(s"write : Time to write all ${System.currentTimeMillis() - t1} ")
+      println(s"write : Time to write all ${System.currentTimeMillis() - t1} ")         
     }
 }
