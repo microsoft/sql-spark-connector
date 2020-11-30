@@ -11,11 +11,11 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 ## About This Release
 
-This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQLServer.
+This is a v1.0.1 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQLServer.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
-The connector is available on Maven: https://search.maven.org/search?q=spark-mssql-connector and can be imported using the coordinate `com.microsoft.azure:spark-mssql-connector:1.0.0`. All future releases will be made on Maven instead of in the GitHub releases section.
+The connector is available on Maven: https://search.maven.org/search?q=spark-mssql-connector and can be imported using the coordinate `com.microsoft.azure:spark-mssql-connector:1.0.1`. All future releases will be made on Maven instead of in the GitHub releases section.
 
 ## Supported Features
 * Support for all Spark bindings (Scala, Python, R)
