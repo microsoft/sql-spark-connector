@@ -19,9 +19,9 @@
     </licenses>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scala.binary.version>2.11</scala.binary.version>
-        <scala.version>2.11.12</scala.version>
-        <spark.version>2.4.6</spark.version>
+        <scala.binary.version>2.12</scala.binary.version>
+        <scala.version>2.12.11</scala.version>
+        <spark.version>3.0.0</spark.version>
     </properties>
     <dependencies>
         <dependency>
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.binary.version}</artifactId>
-            <version>3.0.5</version>
+            <version>3.0.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>7.2.1.jre8</version>
+            <version>8.2.1.jre8</version>
         </dependency>
     </dependencies>
     <developers>
