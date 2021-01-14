@@ -100,6 +100,29 @@ With this new connector, you should be able to simply install onto a cluster (ne
 
 See [Issue #26](https://github.com/microsoft/sql-spark-connector/issues/26) for more details.
 
+### Executing custom SQL through the connector
+The previous Azure SQL Connector for Spark provided the ability to execute custom SQL code like DML or DDL statements through the connector. This functionality is out-of-scope of this connector since it is based on the DataSource APIs. This functionality is readily provided by libraries like pyodbc or you can use the standard java sql interfaces as well.
+
+@B4PJS has provided examples using the standard java sql interfaces in [Issue #21](https://github.com/microsoft/sql-spark-connector/issues/21)
+
+```python
+jdbcUsername = "RelationalLayerLogin"
+jdbcPassword = dbutils.secrets.get(scope = "AzureKeyVault", key = "RelationalLayerLogin")
+server = dbutils.secrets.get(scope = "AzureKeyVault", key = "SqlServerNameSemanticLayer")
+database = dbutils.secrets.get(scope = "AzureKeyVault", key = "RelationalLayerDatabase")
+
+url = "jdbc:sqlserver://{SERVER_ADDR};databaseName={DATABASE_NAME};".format(SERVER_ADDR = server,DATABASE_NAME = database)
+
+#for executing non-queries
+driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
+con = driver_manager.getConnection(url, jdbcUsername, jdbcPassword)
+
+drop = "DROP TABLE IF EXISTS Stage.SalesByDateStoreArticle"
+
+stmt = con.createStatement()
+stmt.executeUpdate(drop)
+stmt.close()
+```
 
 ### Write to a new SQL Table
 #### Important: using the `overwrite` mode will first DROP the table if it already exists in the database by default. Please use this option with due care to avoid unexpected data loss!
