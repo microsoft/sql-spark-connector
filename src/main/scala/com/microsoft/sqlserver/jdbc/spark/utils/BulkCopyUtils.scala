@@ -324,7 +324,8 @@ object BulkCopyUtils extends Logging {
         }
 
 
-        val result = new Array[ColumnMetadata](tableCols.length)
+        val result = new Array[ColumnMetadata](tableCols.length - computedCols.length)
+        var mappingIndex = 0;
 
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
@@ -377,15 +378,21 @@ object BulkCopyUtils extends Logging {
                         s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
             }
 
-            // Schema check passed for element, Create ColMetaData
-            result(i) = new ColumnMetadata(
-                rs.getMetaData().getColumnName(i+1),
-                rs.getMetaData().getColumnType(i+1),
-                rs.getMetaData().getPrecision(i+1),
-                rs.getMetaData().getScale(i+1),
-                isAutoIncrement,
-                dfFieldIndex
-            )
+            // Schema check passed for element, Create ColMetaData, but only
+            // if the column has a mapping
+            if (dfFieldIndex != -1)
+            {
+                result(mappingIndex) = new ColumnMetadata(
+                    rs.getMetaData().getColumnName(i+1),
+                    rs.getMetaData().getColumnType(i+1),
+                    rs.getMetaData().getPrecision(i+1),
+                    rs.getMetaData().getScale(i+1),
+                    isAutoIncrement,
+                    dfFieldIndex
+                )
+
+                mappingIndex += 1
+            }
         }
         result
     }
