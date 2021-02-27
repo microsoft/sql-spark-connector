@@ -66,32 +66,10 @@ public class DataSourceUtilsTest {
         assertTrue(columnOrdinals.size() == 2);
 
         for (int i = 0; i < metadata.length; i++) {
-            assertEquals(record.getColumnName(i+1),   metadata[i].getName());
-            assertEquals(record.getColumnType(i+1),   metadata[i].getType());
-            assertEquals(record.getPrecision(i+1),    metadata[i].getPrecision());
-            assertEquals(record.getScale(i+1),        metadata[i].getScale());
-            assertEquals(record.isAutoIncrement(i+1), metadata[i].isAutoIncrement());
+            assertEquals(record.getColumnName(i+1), metadata[i].getName());
+            assertEquals(record.getColumnType(i+1), metadata[i].getType());
+            assertEquals(record.getPrecision(i+1), metadata[i].getPrecision());
+            assertEquals(record.getScale(i+1), metadata[i].getScale());
         }
-
-//        for (int i = 0; i < rows.length; i++) {
-//            try {
-//                // Assuming that each row has at least two elements
-//                //Object[] rowData = record.getRowData();
-//                assertEquals(rowData[0], rows[i].get(0));
-//                assertEquals(rowData[1], rows[i].get(1));
-//            } catch (SQLServerException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-//        boolean errorCaught = false;
-//        try {
-//            Object[] rowData = record.getRowData();
-//        } catch (SQLServerException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchElementException e) {
-//            errorCaught = true;
-//        }
-//        assertTrue(errorCaught);
     }
 }
