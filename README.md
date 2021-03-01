@@ -9,13 +9,19 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 [Apache Spark](https://spark.apache.org/) is a unified analytics engine for large-scale data processing.
 
-## About This Release
+There are two versions of the connector available through Maven, a 2.4.5 compatible version and a 3.0.0 compatible version. Both versions can be found [here](https://search.maven.org/search?q=spark-mssql-connector) and can be imported using the coordinates below:
 
-This is a V1 release of the Apache Spark Connector for SQL Server and Azure SQL. It is a high-performance connector that enables you transfer data from Spark to SQLServer.
+| Connector | Maven Coordinate |
+| --------- | ------------------ |
+| Spark 2.4.5 compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.1` |
+| Spark 3.0.0 compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12_3.0:1.0.0-alpha` |
+
+## Current Releases
+
+The Spark 2.4.5 compatible connector is on v1.0.1.
+The Spark 3.0.0 compatible connector is on v1.0.0-alpha.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
-
-The connector is available on Maven: https://search.maven.org/search?q=spark-mssql-connector and can be imported using the coordinate `com.microsoft.azure:spark-mssql-connector:1.0.0`. All future releases will be made on Maven instead of in the GitHub releases section.
 
 ## Supported Features
 * Support for all Spark bindings (Scala, Python, R)
@@ -27,8 +33,8 @@ The connector is available on Maven: https://search.maven.org/search?q=spark-mss
 
 | Component | Versions Supported |
 | --------- | ------------------ |
-| Apache Spark | 2.4.5 (Spark 3.0 not supported) |
-| Scala | 2.11 |
+| Apache Spark | 2.4.5, 3.0.0 |
+| Scala | 2.11, 2.12 |
 | Microsoft JDBC Driver for SQL Server | 8.2 |
 | Microsoft SQL Server | SQL Server 2008 or later |
 | Azure SQL Databases | Supported |
@@ -51,6 +57,7 @@ Other [Bulk api options](https://docs.microsoft.com/en-us/sql/connect/jdbc/using
 
 ## Performance comparison
 Apache Spark Connector for SQL Server and Azure SQL is up to 15x faster than generic JDBC connector for writing to SQL Server. Note performance characteristics vary on type, volume of data,  options used and may show run to run variations. The following performance results are the time taken to overwrite a sql table with 143.9M rows in a spark dataframe. The spark dataframe is constructed by reading store_sales HDFS table generated using [spark TPCDS Benchmark](https://github.com/databricks/spark-sql-perf). Time to read store_sales to dataframe is excluded. The results are averaged over 3 runs.
+*Note: The following results were achieved using the Apache Spark 2.4.5 compatible connector. These numbers are not a guarantee of performance.*
 
 | Connector Type | Options | Description |  Time to write |
 | --------- | ------------------ | -------------------------------------| ---------- |
@@ -100,6 +107,10 @@ With this new connector, you should be able to simply install onto a cluster (ne
 
 See [Issue #26](https://github.com/microsoft/sql-spark-connector/issues/26) for more details.
 
+### Executing custom SQL through the connector
+The previous Azure SQL Connector for Spark provided the ability to execute custom SQL code like DML or DDL statements through the connector. This functionality is out-of-scope of this connector since it is based on the DataSource APIs. This functionality is readily provided by libraries like pyodbc or you can use the standard java sql interfaces as well.
+
+You can read the closed issue and view community provided alternatives in [Issue #21](https://github.com/microsoft/sql-spark-connector/issues/21).
 
 ### Write to a new SQL Table
 #### Important: using the `overwrite` mode will first DROP the table if it already exists in the database by default. Please use this option with due care to avoid unexpected data loss!
