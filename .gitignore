@@ -304,12 +304,8 @@ paket-files/
 
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
-*#*#
-*.#*
-*.iml
-*.ipr
-*.iws
 *.pyc
+
 # Cake - Uncomment if you are using it
 # tools/**
 # !tools/packages.config
@@ -352,32 +348,3 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-*.pyo
-*.swp
-*.rej
-*~
-.DS_Store
-.cache
-.classpath
-.ensime
-.jvmopts
-.ensime_cache/
-.ensime_lucene
-.generated-mima*
-.vscode/
-.metals/
-.bloop/
-.idea/
-.idea_modules/
-.project
-.scala_dependencies
-.settings
-project/target/
-project/plugins/lib_managed/
-project/plugins/project/build.properties
-project/plugins/src_managed/
-project/plugins/target/
-scalastyle-on-compile.generated.xml
-scalastyle-output.xml
-scalastyle.txt
-target/
