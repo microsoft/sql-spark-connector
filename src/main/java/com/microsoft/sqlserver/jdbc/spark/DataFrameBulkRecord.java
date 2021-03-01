@@ -35,6 +35,8 @@ public class DataFrameBulkRecord implements ISQLServerBulkRecord, AutoCloseable 
     private ColumnMetadata[] dfColumnMetadata;
     private Set<Integer> columnOrdinals;
 
+    private static final long serialVersionUID = 1L;
+    
     public DataFrameBulkRecord(Iterator<Row> iterator, ColumnMetadata[] dfColumnMetadata) {
         this.iterator = iterator;
         this.dfColumnMetadata = dfColumnMetadata;
