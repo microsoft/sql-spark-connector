@@ -13,7 +13,7 @@
     </organization>
     <licenses>
         <license>
-            <name>MIT License</name>
+            <name>Apache License 2.0</name>
             <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
