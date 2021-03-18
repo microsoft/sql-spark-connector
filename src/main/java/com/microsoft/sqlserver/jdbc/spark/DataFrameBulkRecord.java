@@ -14,29 +14,23 @@
 package com.microsoft.sqlserver.jdbc.spark;
 
 import java.util.Set;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.time.format.DateTimeFormatter;
-import java.sql.Types;
-import java.sql.JDBCType;
-import java.text.MessageFormat;
-import java.time.OffsetTime;
 import java.lang.AutoCloseable;
 
+import com.microsoft.sqlserver.jdbc.ISQLServerBulkData;
 import org.apache.spark.sql.Row;
 import scala.collection.Iterator;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
-import com.microsoft.sqlserver.jdbc.ISQLServerBulkRecord;
 
-public class DataFrameBulkRecord implements ISQLServerBulkRecord, AutoCloseable {
+public class DataFrameBulkRecord implements ISQLServerBulkData, AutoCloseable {
     private Iterator<Row> iterator;
     private ColumnMetadata[] dfColumnMetadata;
     private Set<Integer> columnOrdinals;
 
     private static final long serialVersionUID = 1L;
-    
+
     public DataFrameBulkRecord(Iterator<Row> iterator, ColumnMetadata[] dfColumnMetadata) {
         this.iterator = iterator;
         this.dfColumnMetadata = dfColumnMetadata;
@@ -85,40 +79,10 @@ public class DataFrameBulkRecord implements ISQLServerBulkRecord, AutoCloseable 
     }
 
     @Override
-    public boolean isAutoIncrement(int column) {
-        return dfColumnMetadata[column-1].isAutoIncrement();
-    }
-
-    @Override
     public boolean next() throws SQLServerException {
         return iterator.hasNext();
     }
 
     @Override
     public void close() throws SQLServerException {}
-
-    @Override
-    public void addColumnMetadata(int positionInFile, String name, int jdbcType,
-        int precision, int scale) {}
-
-    @Override
-    public void addColumnMetadata(int positionInFile, String name, int jdbcType,
-        int precision, int scale, DateTimeFormatter dateTimeFormatter) {}
-
-    @Override
-    public DateTimeFormatter getColumnDateTimeFormatter(int column) {
-        return null;
-    }
-
-    @Override
-    public void setTimestampWithTimezoneFormat(String dateTimeFormat) {}
-
-    @Override
-    public void setTimestampWithTimezoneFormat(DateTimeFormatter dateTimeFormatter) {}
-
-    @Override
-    public void setTimeWithTimezoneFormat(String timeFormat) {}
-
-    @Override
-    public void	setTimeWithTimezoneFormat(DateTimeFormatter dateTimeFormatter) {}
 }

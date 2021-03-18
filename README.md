@@ -35,7 +35,7 @@ For main changes from previous releases and known issues please refer to [CHANGE
 | --------- | ------------------ |
 | Apache Spark | 2.4.5, 3.0.0 |
 | Scala | 2.11, 2.12 |
-| Microsoft JDBC Driver for SQL Server | 8.2 |
+| Microsoft JDBC Driver for SQL Server | 8.4.1 |
 | Microsoft SQL Server | SQL Server 2008 or later |
 | Azure SQL Databases | Supported |
 

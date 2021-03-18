@@ -56,6 +56,8 @@ class DefaultSource extends JdbcRelationProvider with Logging {
         val conn = createConnectionFactory(options)()
         val df = repartitionDataFrame(rawDf, options)
 
+        logInfo(s"JDBC Driver major/mior version " +
+          s"${conn.getMetaData().getJDBCMajorVersion()}  ${conn.getMetaData().getJDBCMinorVersion()}")
         logDebug("createRelations: Write request. Connection catalogue is" + s"${conn.getCatalog()}")
         logDebug(s"createRelations: Write request. ApplicationId is ${sqlContext.sparkContext.applicationId}")
         try {
