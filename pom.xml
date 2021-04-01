@@ -242,5 +242,26 @@
         </dependency>
         </dependencies>
     </profile>
+        <profile>
+            <id>spark311</id>
+            <properties>
+                <scala.binary.version>2.12</scala.binary.version>
+                <scala.version>2.12.10</scala.version>
+                <spark.version>3.1.1</spark.version>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.scalatest</groupId>
+                    <artifactId>scalatest_${scala.binary.version}</artifactId>
+                    <version>3.2.6</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.microsoft.sqlserver</groupId>
+                    <artifactId>mssql-jdbc</artifactId>
+                    <version>8.2.1.jre8</version>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>

@@ -11,7 +11,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.microsoft.sqlserver.jdbc.spark;
+package com.microsoft.sqlserver.jdbc.spark.bulkwrite;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -26,6 +26,7 @@ import org.apache.spark.sql.RowFactory;
 import scala.collection.Iterator;
 import scala.collection.JavaConversions;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
+import com.microsoft.sqlserver.jdbc.spark.*;
 
 public class DataSourceUtilsTest {
     @Test
