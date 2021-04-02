@@ -103,9 +103,7 @@ object BulkCopyUtils extends Logging {
         sqlServerBulkCopy.setDestinationTableName(tableName)
 
         for (i <- 0 to dfColMetadata.length-1) {
-            if (!dfColMetadata(i).isAutoIncrement()){
-                sqlServerBulkCopy.addColumnMapping(dfColMetadata(i).getName(), dfColMetadata(i).getName())
-            }
+            sqlServerBulkCopy.addColumnMapping(dfColMetadata(i).getName(), dfColMetadata(i).getName())
         }
 
         val bulkRecord = new DataFrameBulkRecord(iterator, dfColMetadata)
@@ -324,7 +322,8 @@ object BulkCopyUtils extends Logging {
         }
 
 
-        val result = new Array[ColumnMetadata](tableCols.length)
+        val result = new Array[ColumnMetadata](tableCols.length - computedCols.length)
+        var mappingIndex = 0
 
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
@@ -378,14 +377,17 @@ object BulkCopyUtils extends Logging {
             }
 
             // Schema check passed for element, Create ColMetaData
-            result(i) = new ColumnMetadata(
-                rs.getMetaData().getColumnName(i+1),
-                rs.getMetaData().getColumnType(i+1),
-                rs.getMetaData().getPrecision(i+1),
-                rs.getMetaData().getScale(i+1),
-                isAutoIncrement,
-                dfFieldIndex
-            )
+            if(dfFieldIndex != -1){
+                result(mappingIndex) = new ColumnMetadata(
+                    rs.getMetaData().getColumnName(i+1),
+                    rs.getMetaData().getColumnType(i+1),
+                    rs.getMetaData().getPrecision(i+1),
+                    rs.getMetaData().getScale(i+1),
+                    isAutoIncrement,
+                    dfFieldIndex
+                )
+                mappingIndex += 1
+            }  
         }
         result
     }
