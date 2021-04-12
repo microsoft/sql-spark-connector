@@ -22,15 +22,13 @@ public class ColumnMetadata implements Serializable {
     private int type;
     private int precision;
     private int scale;
-    private boolean isAutoIncrement;
     private int dfColIndex; // index of this column in the dataframe.
 
-    public ColumnMetadata(String name, int type, int precision, int scale, boolean isAutoIncrement, int dfColIndex) {
+    public ColumnMetadata(String name, int type, int precision, int scale, int dfColIndex) {
         this.name = name;
         this.type = type;
         this.precision = precision;
         this.scale = scale;
-        this.isAutoIncrement = isAutoIncrement;
         this.dfColIndex = dfColIndex;
     }
 
@@ -48,10 +46,6 @@ public class ColumnMetadata implements Serializable {
 
     public int getScale() {
         return scale;
-    }
-
-    public boolean isAutoIncrement() {
-        return isAutoIncrement;
     }
 
     public int getDfColIndex() {

@@ -233,7 +233,6 @@ object BulkCopyUtils extends Logging {
                 metadata.getColumnType(idx+1),
                 metadata.getPrecision(idx+1),
                 metadata.getScale(idx+1),
-                metadata.isAutoIncrement(idx+1),
                 idx)
         }
         result
@@ -323,15 +322,13 @@ object BulkCopyUtils extends Logging {
 
 
         val result = new Array[ColumnMetadata](tableCols.length - computedCols.length)
-        var mappingIndex = 0
+        var nonAutoColIndex = 0
 
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
             var dfFieldIndex = -1
-            var isAutoIncrement = false
+            // set dfFieldIndex = -1 for all computed columns to skip ColumnMetadata
             if (computedCols.contains(tableColName)) {
-                // set dfFieldIndex = -1 and isAutoIncrement = true for all computed columns to skip bulk copy mapping
-                isAutoIncrement = true
                 logDebug(s"skipping computed col index $i col name $tableColName dfFieldIndex $dfFieldIndex")
             }else{
                 var dfColName:String = ""
@@ -374,20 +371,17 @@ object BulkCopyUtils extends Logging {
                     s"${prefix} column nullable configurations at column index ${i}" +
                         s" DF col ${dfColName} nullable config is ${dfCols(dfFieldIndex).nullable} " +
                         s" Table col ${tableColName} nullable config is ${tableCols(i).nullable}")
-            }
 
-            // Schema check passed for element, Create ColMetaData
-            if(dfFieldIndex != -1){
-                result(mappingIndex) = new ColumnMetadata(
+                // Schema check passed for element, Create ColMetaData only for non auto generated column
+                result(nonAutoColIndex) = new ColumnMetadata(
                     rs.getMetaData().getColumnName(i+1),
                     rs.getMetaData().getColumnType(i+1),
                     rs.getMetaData().getPrecision(i+1),
                     rs.getMetaData().getScale(i+1),
-                    isAutoIncrement,
                     dfFieldIndex
                 )
-                mappingIndex += 1
-            }  
+                nonAutoColIndex += 1
+            }
         }
         result
     }
