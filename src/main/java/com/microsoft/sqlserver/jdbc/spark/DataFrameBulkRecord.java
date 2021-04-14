@@ -46,9 +46,7 @@ public class DataFrameBulkRecord implements ISQLServerBulkData, AutoCloseable {
              // Columns may be reordered between SQLTable and DataFrame. dfFieldIndex maps to the
              // corresponding column in rowData and thus use dfFieldIndex to get the column.
              int dfFieldIndex = dfColumnMetadata[idx].getDfColIndex();
-             if (!dfColumnMetadata[idx].isAutoIncrement()) {
-                 rowData[idx] = row.get(dfFieldIndex);
-             }
+             rowData[idx] = row.get(dfFieldIndex);
         }
         return rowData;
     }
