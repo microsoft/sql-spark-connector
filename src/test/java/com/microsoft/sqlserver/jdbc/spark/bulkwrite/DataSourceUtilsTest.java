@@ -34,15 +34,13 @@ public class DataSourceUtilsTest {
         int type = Types.INTEGER;
         int precision = 50;
         int scale = 10;
-        Boolean isAutoIncrement = true;
 
-        ColumnMetadata columnMetadata = new ColumnMetadata(name, type, precision, scale, isAutoIncrement,20);
+        ColumnMetadata columnMetadata = new ColumnMetadata(name, type, precision, scale,20);
 
         assertEquals(name, columnMetadata.getName());
         assertEquals(type, columnMetadata.getType());
         assertEquals(precision, columnMetadata.getPrecision());
         assertEquals(scale, columnMetadata.getScale());
-        assertEquals(isAutoIncrement, columnMetadata.isAutoIncrement());
     }
 
     @Test
@@ -53,8 +51,8 @@ public class DataSourceUtilsTest {
         };
 
         ColumnMetadata[] metadata = new ColumnMetadata[] {
-            new ColumnMetadata("entry_number", Types.INTEGER, 10, 5, true,20),
-            new ColumnMetadata("entry_word", Types.LONGVARCHAR, 20, 4, false,20)
+            new ColumnMetadata("entry_number", Types.INTEGER, 10, 5,20),
+            new ColumnMetadata("entry_word", Types.LONGVARCHAR, 20, 4,20)
         };
 
         Iterator<Row> itr = JavaConversions.asScalaIterator(Arrays.asList(rows).iterator());
