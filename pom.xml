@@ -13,16 +13,10 @@
     </organization>
     <licenses>
         <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scala.binary.version>2.11</scala.binary.version>
-        <scala.version>2.11.12</scala.version>
-        <spark.version>2.4.6</spark.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -57,12 +51,6 @@
             <classifier>tests</classifier>
         </dependency>
         <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala.binary.version}</artifactId>
-            <version>3.0.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.novocode</groupId>
             <artifactId>junit-interface</artifactId>
             <version>0.11</version>
@@ -71,7 +59,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>7.2.1.jre8</version>
+            <version>8.4.1.jre8</version>
         </dependency>
     </dependencies>
     <developers>
@@ -213,4 +201,48 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+    <profile>
+        <id>spark24</id>
+        <properties>
+            <scala.binary.version>2.11</scala.binary.version>
+            <scala.version>2.11.12</scala.version>
+            <spark.version>2.4.6</spark.version>
+        </properties>
+        <dependencies>
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_${scala.binary.version}</artifactId>
+                <version>3.0.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>7.2.1.jre8</version>
+            </dependency>
+        </dependencies>
+    </profile>
+    <profile>
+        <id>spark30</id>
+        <properties>
+            <scala.binary.version>2.12</scala.binary.version>
+            <scala.version>2.12.11</scala.version>
+            <spark.version>3.0.0</spark.version>
+        </properties>
+        <dependencies>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.binary.version}</artifactId>
+            <version>3.0.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>8.2.2.jre8</version>
+        </dependency>
+        </dependencies>
+    </profile>
+    </profiles>
 </project>

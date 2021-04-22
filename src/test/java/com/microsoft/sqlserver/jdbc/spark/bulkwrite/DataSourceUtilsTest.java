@@ -34,15 +34,13 @@ public class DataSourceUtilsTest {
         int type = Types.INTEGER;
         int precision = 50;
         int scale = 10;
-        Boolean isAutoIncrement = true;
 
-        ColumnMetadata columnMetadata = new ColumnMetadata(name, type, precision, scale, isAutoIncrement,20);
+        ColumnMetadata columnMetadata = new ColumnMetadata(name, type, precision, scale,20);
 
         assertEquals(name, columnMetadata.getName());
         assertEquals(type, columnMetadata.getType());
         assertEquals(precision, columnMetadata.getPrecision());
         assertEquals(scale, columnMetadata.getScale());
-        assertEquals(isAutoIncrement, columnMetadata.isAutoIncrement());
     }
 
     @Test
@@ -53,8 +51,8 @@ public class DataSourceUtilsTest {
         };
 
         ColumnMetadata[] metadata = new ColumnMetadata[] {
-            new ColumnMetadata("entry_number", Types.INTEGER, 10, 5, true,20),
-            new ColumnMetadata("entry_word", Types.LONGVARCHAR, 20, 4, false,20)
+            new ColumnMetadata("entry_number", Types.INTEGER, 10, 5,20),
+            new ColumnMetadata("entry_word", Types.LONGVARCHAR, 20, 4,20)
         };
 
         Iterator<Row> itr = JavaConversions.asScalaIterator(Arrays.asList(rows).iterator());
@@ -66,32 +64,10 @@ public class DataSourceUtilsTest {
         assertTrue(columnOrdinals.size() == 2);
 
         for (int i = 0; i < metadata.length; i++) {
-            assertEquals(record.getColumnName(i+1),   metadata[i].getName());
-            assertEquals(record.getColumnType(i+1),   metadata[i].getType());
-            assertEquals(record.getPrecision(i+1),    metadata[i].getPrecision());
-            assertEquals(record.getScale(i+1),        metadata[i].getScale());
-            assertEquals(record.isAutoIncrement(i+1), metadata[i].isAutoIncrement());
+            assertEquals(record.getColumnName(i+1), metadata[i].getName());
+            assertEquals(record.getColumnType(i+1), metadata[i].getType());
+            assertEquals(record.getPrecision(i+1), metadata[i].getPrecision());
+            assertEquals(record.getScale(i+1), metadata[i].getScale());
         }
-
-//        for (int i = 0; i < rows.length; i++) {
-//            try {
-//                // Assuming that each row has at least two elements
-//                //Object[] rowData = record.getRowData();
-//                assertEquals(rowData[0], rows[i].get(0));
-//                assertEquals(rowData[1], rows[i].get(1));
-//            } catch (SQLServerException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-//        boolean errorCaught = false;
-//        try {
-//            Object[] rowData = record.getRowData();
-//        } catch (SQLServerException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchElementException e) {
-//            errorCaught = true;
-//        }
-//        assertTrue(errorCaught);
     }
 }
