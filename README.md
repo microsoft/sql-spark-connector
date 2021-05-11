@@ -39,7 +39,6 @@ For main changes from previous releases and known issues please refer to [CHANGE
 | Microsoft SQL Server | SQL Server 2008 or later |
 | Azure SQL Databases | Supported |
 
-*Note: Azure Synapse (Azure SQL DW) use is not tested with this connector. While it may work, there may be unintended consequences.*
 
 ### Supported Options
 The Apache Spark Connector for SQL Server and Azure SQL supports the options defined here: [SQL DataSource JDBC](https://spark.apache.org/docs/latest/sql-data-sources-jdbc.html)
@@ -103,6 +102,10 @@ For more information and explanation, visit the closed [issue](https://github.co
 The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark DataSourceV1 API and SQL Server Bulk API and uses the same interface as the built-in JDBC Spark-SQL connector. This allows you to easily integrate the connector and migrate your existing Spark jobs by simply updating the format parameter with `com.microsoft.sqlserver.jdbc.spark`.
 
 To include the connector in your projects download this repository and build the jar using SBT.
+
+### Loading connector in Azure Synapse Analytics
+
+For use within Azure Synapse Analytics, the Apache Spark Connector for SQL Server and Azure SQL has been built into the Microsoft Runtime for Apache Spark 2.4. 
 
 ### Migrating from Legacy Azure SQL Connector for Spark
 
