@@ -59,6 +59,7 @@ Other [Bulk api options](https://docs.microsoft.com/en-us/sql/connect/jdbc/using
 Apache Spark Connector for SQL Server and Azure SQL is up to 15x faster than generic JDBC connector for writing to SQL Server. Note performance characteristics vary on type, volume of data,  options used and may show run to run variations. The following performance results are the time taken to overwrite a sql table with 143.9M rows in a spark dataframe. The spark dataframe is constructed by reading store_sales HDFS table generated using [spark TPCDS Benchmark](https://github.com/databricks/spark-sql-perf). Time to read store_sales to dataframe is excluded. The results are averaged over 3 runs.
 *Note: The following results were achieved using the Apache Spark 2.4.5 compatible connector. These numbers are not a guarantee of performance.*
 
+### Performance comparison (on-prem Cluster)
 | Connector Type | Options | Description |  Time to write |
 | --------- | ------------------ | -------------------------------------| ---------- |
 | JDBCConnector | Default | Generic JDBC connector with default options |  1385s |
@@ -76,6 +77,25 @@ Environment
 - [SQL Server Big Data Cluster](https://docs.microsoft.com/en-us/sql/big-data-cluster/release-notes-big-data-cluster?view=sql-server-ver15) CU5
 - Master + 6 nodes
 - Each node gen 5 server, 512GB Ram, 4TB NVM per node, NIC 10GB
+
+### Performance comparison (Azure Kubernetes Service (AKS) Cluster)
+| Connector Type | Options | Description |  Time to write |
+| --------- | ------------------ | -------------------------------------| ---------- |
+| JDBCConnector | Default | Generic JDBC connector with default options |  3247s |
+| sql-spark-connector | BEST_EFFORT | Best effort sql-spark-connector  with default options |1799s |
+| sql-spark-connector | NO_DUPLICATES | Reliable sql-spark-connector | 655s |
+| sql-spark-connector | BEST_EFFORT + tabLock=true | Best effort sql-spark-connector with table lock enabled | 75s |
+| sql-spark-connector | NO_DUPLICATES + tabLock=true| Reliable sql-spark-connector with table lock enabled| 290s |
+
+Config
+- Spark config : `num_executors = 10`, `executor_memory = '20g'`, `executor_cores = 4` (`executor_cores = 1` for Default JDBCConnector to ensure enough memory)
+- Data Gen config : `scale_factor=50`, `partitioned_tables=true`
+- Data file Store_sales with number of of rows 143,997,590
+
+Environment
+- [SQL Server Big Data Cluster](https://docs.microsoft.com/en-us/sql/big-data-cluster/release-notes-big-data-cluster?view=sql-server-ver15) CU8
+- 6 nodes [Standard_L80s_v2 VM](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series)
+- Each node 640GiB Ram, using remote disks
 
 ## Commonly Faced Issues
 
