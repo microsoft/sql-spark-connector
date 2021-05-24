@@ -191,14 +191,14 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
                dfColMetadata: Array[ColumnMetadata],
                options: SQLServerBulkJdbcOptions): String = {
     logDebug(s"stmtInsertWithUnion: Staging tables to union are ${stagingTableList.mkString(",")}")
-    val unionStr = stagingTableList.map(item => s"SELECT * from $item").mkString(" UNION ALL ")
+    val unionStr = stagingTableList.map(item => s"SELECT * from [$item]").mkString(" UNION ALL ")
     val colStr = dfColMetadata.map(item => item.getName).mkString(",")
     options.tableLock match {
       case true => {
-       s"INSERT INTO ${options.dbtable} WITH (TABLOCK) $unionStr"
+       s"INSERT INTO [${options.dbtable}] WITH (TABLOCK) $unionStr"
       }
       case false => {
-        s"INSERT INTO ${options.dbtable} $unionStr"
+        s"INSERT INTO [${options.dbtable}] $unionStr"
       }
     }
   }
@@ -232,7 +232,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
                tableName : String,
                options: SQLServerBulkJdbcOptions) : Unit = {
     logDebug(s"createStagingTable : Creating table $tableName as schema copy of ${options.dbtable}")
-    val createTableStr = s"SELECT * INTO $tableName From ${options.dbtable} WHERE 1=0"
+    val createTableStr = s"SELECT * INTO [$tableName] From [${options.dbtable}] WHERE 1=0"
     executeUpdate(conn,createTableStr)
   }
 

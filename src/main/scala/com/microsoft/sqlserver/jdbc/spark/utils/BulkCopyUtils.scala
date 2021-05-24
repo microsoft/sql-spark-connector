@@ -483,7 +483,7 @@ object BulkCopyUtils extends Logging {
         conn: Connection, 
         dbtable: String): Unit = {
         logDebug(s"Truncating table ${dbtable}")
-        val truncateTableStr = s"TRUNCATE TABLE ${dbtable}"
+        val truncateTableStr = s"TRUNCATE TABLE [${dbtable}]"
         executeUpdate(conn,truncateTableStr)
         logDebug("Truncating table succeeded")
     }
@@ -500,7 +500,7 @@ object BulkCopyUtils extends Logging {
                         options: SQLServerBulkJdbcOptions): Unit = {
         logDebug("Creating table")
         val strSchema = schemaString(df, options.url, options.createTableColumnTypes)
-        val createTableStr = s"CREATE TABLE ${options.dbtable} (${strSchema}) ${options.createTableOptions}"
+        val createTableStr = s"CREATE TABLE [${options.dbtable}] (${strSchema}) ${options.createTableOptions}"
         executeUpdate(conn,createTableStr)
         logDebug("Creating table succeeded")
     }
@@ -518,7 +518,7 @@ object BulkCopyUtils extends Logging {
         options: SQLServerBulkJdbcOptions): Unit = {
         logDebug(s"Creating external table ${options.dbtable}")
         val strSchema = schemaString(df, "jdbc:sqlserver")
-        val createExTableStr =  s"CREATE EXTERNAL TABLE ${options.dbtable} (${strSchema}) " +
+        val createExTableStr =  s"CREATE EXTERNAL TABLE [${options.dbtable}] (${strSchema}) " +
           s"WITH (DATA_SOURCE=${options.dataPoolDataSource}, DISTRIBUTION=${options.dataPoolDistPolicy});"
         executeUpdate(conn,createExTableStr)
         logDebug("Creating external table succeeded")
