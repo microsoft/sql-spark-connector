@@ -223,7 +223,10 @@
     </profile>
     <profile>
         <id>spark30</id>
-        <properties>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+	<properties>
             <scala.binary.version>2.12</scala.binary.version>
             <scala.version>2.12.11</scala.version>
             <spark.version>3.0.0</spark.version>
