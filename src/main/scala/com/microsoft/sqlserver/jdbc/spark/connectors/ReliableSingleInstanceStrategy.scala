@@ -95,7 +95,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
         (index, iterator) => {
           val table_name = getStagingTableName(appId,options.dbtable,index)
           logDebug(s"writeToStagingTables: Writing partition index $index to Table $table_name")
-          val newOptions = new SQLServerBulkJdbcOptions(options.parameters + ("tableLock" -> "true"))
+          val newOptions = new SQLServerBulkJdbcOptions(options.parameters + ("tableLock" -> "true") + ("applicationname" -> options.parameters.getOrElse("applicationname", "Spark MSSQL Connector")))
           idempotentInsertToTable(iterator, table_name, dfColMetadata, newOptions)
           logInfo(s"writeToStagingTables: Successfully wrote partition $index to Table $table_name")
           Iterator[Int](1)
