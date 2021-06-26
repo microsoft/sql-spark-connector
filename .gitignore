@@ -353,3 +353,8 @@ project/project/
 project/target/
 target/
 .idea
+
+# VS Code generated folders
+.settings
+.classpath
+.project
