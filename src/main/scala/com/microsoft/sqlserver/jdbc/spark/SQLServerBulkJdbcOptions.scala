@@ -68,9 +68,11 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
   val allowEncryptedValueModifications =
     params.getOrElse("allowEncryptedValueModifications", "false").toBoolean
 
-
   val schemaCheckEnabled =
     params.getOrElse("schemaCheckEnabled", "true").toBoolean
+
+  val hideGraphColumns =
+    params.getOrElse("hideGraphColumns", "true").toBoolean
 
   // Not a feature
   // Only used for internally testing data idempotency
