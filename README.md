@@ -11,15 +11,16 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 There are two versions of the connector available through Maven, a 2.4.5 compatible version and a 3.0.0 compatible version. Both versions can be found [here](https://search.maven.org/search?q=spark-mssql-connector) and can be imported using the coordinates below:
 
-| Connector | Maven Coordinate |
-| --------- | ------------------ |
-| Spark 2.4.5 compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.1` |
-| Spark 3.0.0 compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12_3.0:1.0.0-alpha` |
+| Connector | Maven Coordinate | Scala Version |
+| --------- | ---------------- | ------------- |
+| Spark 2.4.5 compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.2` | 2.11 |
+| Spark 3.0.0 compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12 |
 
 ## Current Releases
 
-The Spark 2.4.5 compatible connector is on v1.0.1.
-The Spark 3.0.0 compatible connector is on v1.0.0-alpha.
+The latest Spark 2.4.5 compatible connector is on v1.0.2.
+
+The latest Spark 3.0.0 compatible connector is on v1.1.0.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
