@@ -36,7 +36,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
    * Phase 2 Driver combines all staging tables to transactionally write to user specified table.
    * Driver does a cleanup of staging tables as a good practice. Staging tables are temporary tables
    * and should be cleanup automatically on job completion. Staging table names are prefixed
-   * with appId to allow for identification.
+   * with appId and destination le name to allow for identification.
    * @param df dataframe to write
    * @param dfColMetaData for the table
    * @param options user specified options
@@ -50,7 +50,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
     logInfo("write : reliable write to single instance called")
     // Initialize - create connection and cleanup existing tables if any
     val conn = createConnectionFactory(options)()
-    val stagingTableList = getStagingTableNames(appId, df.rdd.getNumPartitions)
+    val stagingTableList = getStagingTableNames(appId, options.dbtable, df.rdd.getNumPartitions)
     cleanupStagingTables(conn, stagingTableList, options)
     createStagingTables(conn, stagingTableList,options)
     // Phase1 - Executors write partitions to staging tables.
@@ -93,7 +93,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
     try {
       df.rdd.mapPartitionsWithIndex(
         (index, iterator) => {
-          val table_name = getStagingTableName(appId,index)
+          val table_name = getStagingTableName(appId,options.dbtable,index)
           logDebug(s"writeToStagingTables: Writing partition index $index to Table $table_name")
           val newOptions = new SQLServerBulkJdbcOptions(options.parameters + ("tableLock" -> "true"))
           idempotentInsertToTable(iterator, table_name, dfColMetadata, newOptions)
@@ -157,28 +157,32 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
 
   /**
    * utility function to get all global temp table names as a list.
-   * @param appId appId used as prefix of tablename
-   * @param nrOfPartitions number of paritions in dataframe used as suffix
+   * @param appId appId used as prefix of staging table name
+   * @param dbtable destination table name used as prefix of temp staging table name
+   * @param nrOfPartitions number of partitions in dataframe used as suffix
    */
   private def getStagingTableNames(
                 appId: String,
+                dbtable: String,
                 nrOfPartitions: Int): IndexedSeq[String] = {
     val stagingTableList = for (index <- 0 until nrOfPartitions) yield {
-      getStagingTableName(appId, index)
+      getStagingTableName(appId, dbtable, index)
     }
     stagingTableList
   }
 
   /**
    * utility function to create a staging table name
-   * @param appId appId used as prefix of tablename
+   * @param appId appId used as prefix of table name
+   * @param dbtable destination table name used as prefix of temp staging table name
    * @param index used as suffix
    */
   private def getStagingTableName(
                appId: String,
+               dbtable: String,
                index:Int) : String = {
     // Global table names in SQLServer are prefixed with ##
-    s"[##${appId}_${index}]"
+    s"[##${appId}_${dbtable}_${index}]"
   }
 
   /**
