@@ -36,7 +36,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
    * Phase 2 Driver combines all staging tables to transactionally write to user specified table.
    * Driver does a cleanup of staging tables as a good practice. Staging tables are temporary tables
    * and should be cleanup automatically on job completion. Staging table names are prefixed
-   * with appId and destination le name to allow for identification.
+   * with appId and destination fully qualified table name to allow for identification.
    * @param df dataframe to write
    * @param dfColMetaData for the table
    * @param options user specified options
@@ -158,7 +158,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
   /**
    * utility function to get all global temp table names as a list.
    * @param appId appId used as prefix of staging table name
-   * @param dbtable destination table name used as prefix of temp staging table name
+   * @param dbtable destination fully qualified table name used as part of temp staging table name
    * @param nrOfPartitions number of partitions in dataframe used as suffix
    */
   private def getStagingTableNames(
@@ -174,7 +174,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
   /**
    * utility function to create a staging table name
    * @param appId appId used as prefix of table name
-   * @param dbtable destination table name used as prefix of temp staging table name
+   * @param dbtable destination fully qualified table name used as part of temp staging table name
    * @param index used as suffix
    */
   private def getStagingTableName(
