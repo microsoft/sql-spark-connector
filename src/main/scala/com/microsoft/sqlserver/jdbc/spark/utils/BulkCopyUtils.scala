@@ -13,7 +13,7 @@
 */
 package com.microsoft.sqlserver.jdbc.spark
 
-import java.sql.{Connection, ResultSet, ResultSetMetaData, SQLException}
+import java.sql.{Connection, ResultSet, ResultSetMetaData, SQLException, PreparedStatement}
 
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
@@ -175,8 +175,12 @@ object BulkCopyUtils extends Logging {
     private[spark] def getEmptyResultSet(
         conn: Connection, 
         table: String): ResultSet = {
-        val queryStr = s"SELECT * FROM ${table} WHERE 1=0;"
-        conn.createStatement.executeQuery(queryStr)
+        val queryStr = s"SELECT * FROM ? WHERE 1=0;"
+        val preparedStmt: PreparedStatement = conn.prepareStatement(queryStr)
+        preparedStmt.setString(1, table)
+        val rs = preparedStmt.executeQuery()
+        preparedStmt.close()
+        rs
     }
 
     /**
@@ -187,8 +191,11 @@ object BulkCopyUtils extends Logging {
     private[spark] def getComputedCols(
         conn: Connection, 
         table: String): List[String] = {
-        val queryStr = s"SELECT name FROM sys.computed_columns WHERE object_id = OBJECT_ID('${table}');"
-        val computedColRs = conn.createStatement.executeQuery(queryStr)
+        val queryStr = s"SELECT name FROM sys.computed_columns WHERE object_id = OBJECT_ID('?');"
+        val preparedStmt: PreparedStatement = conn.prepareStatement(queryStr)
+        preparedStmt.setString(1, table)
+        val computedColRs = preparedStmt.executeQuery()
+        preparedStmt.close()
         val computedCols = ListBuffer[String]()
         while (computedColRs.next()) {
             val colName = computedColRs.getString("name")
