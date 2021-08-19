@@ -13,14 +13,14 @@ There are two versions of the connector available through Maven, a 2.4.5 compati
 
 | Connector | Maven Coordinate | Scala Version |
 | --------- | ---------------- | ------------- |
-| Spark 2.4.5 compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.2` | 2.11 |
-| Spark 3.0.0 compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12 |
+| Spark 2.4.x compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.2` | 2.11 |
+| Spark 3.0.x compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12 |
 
 ## Current Releases
 
-The latest Spark 2.4.5 compatible connector is on v1.0.2.
+The latest Spark 2.4.x compatible connector is on v1.0.2.
 
-The latest Spark 3.0.0 compatible connector is on v1.1.0.
+The latest Spark 3.0.x compatible connector is on v1.1.0.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
@@ -34,7 +34,7 @@ For main changes from previous releases and known issues please refer to [CHANGE
 
 | Component | Versions Supported |
 | --------- | ------------------ |
-| Apache Spark | 2.4.5, 3.0.0 |
+| Apache Spark | 2.4.x, 3.0.x |
 | Scala | 2.11, 2.12 |
 | Microsoft JDBC Driver for SQL Server | 8.4.1 |
 | Microsoft SQL Server | SQL Server 2008 or later |
