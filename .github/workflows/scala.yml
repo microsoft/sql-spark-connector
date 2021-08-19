@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        profile: ['spark24', 'spark30']
+        profile: ['spark31']
     timeout-minutes: 15
 
     steps:
