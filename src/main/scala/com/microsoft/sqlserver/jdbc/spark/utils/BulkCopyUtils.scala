@@ -499,7 +499,7 @@ object BulkCopyUtils extends Logging {
                         df: DataFrame,
                         options: SQLServerBulkJdbcOptions): Unit = {
         logDebug("Creating table")
-        val strSchema = schemaString(df, options.url, options.createTableColumnTypes)
+        val strSchema = schemaString(df.schema, true, options.url, options.createTableColumnTypes)
         val createTableStr = s"CREATE TABLE ${options.dbtable} (${strSchema}) ${options.createTableOptions}"
         executeUpdate(conn,createTableStr)
         logDebug("Creating table succeeded")
@@ -517,7 +517,7 @@ object BulkCopyUtils extends Logging {
         df: DataFrame,
         options: SQLServerBulkJdbcOptions): Unit = {
         logDebug(s"Creating external table ${options.dbtable}")
-        val strSchema = schemaString(df, "jdbc:sqlserver")
+        val strSchema = schemaString(df.schema, true, "jdbc:sqlserver")
         val createExTableStr =  s"CREATE EXTERNAL TABLE ${options.dbtable} (${strSchema}) " +
           s"WITH (DATA_SOURCE=${options.dataPoolDataSource}, DISTRIBUTION=${options.dataPoolDistPolicy});"
         executeUpdate(conn,createExTableStr)

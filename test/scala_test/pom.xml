@@ -123,19 +123,14 @@
     </build>
     <profiles>
         <profile>
-            <id>spark24</id>
-            <properties>
-                <scala.binary.version>2.11</scala.binary.version>
-                <scala.version>2.11.12</scala.version>
-                <spark.version>2.4.6</spark.version>
-            </properties>
-        </profile>
-        <profile>
-            <id>spark30</id>
+            <id>spark31</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <scala.binary.version>2.12</scala.binary.version>
                 <scala.version>2.12.11</scala.version>
-                <spark.version>3.0.0</spark.version>
+                <spark.version>3.1.2</spark.version>
             </properties>
         </profile>
     </profiles>

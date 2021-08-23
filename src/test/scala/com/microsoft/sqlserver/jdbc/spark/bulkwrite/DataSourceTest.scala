@@ -14,7 +14,7 @@
 package com.microsoft.sqlserver.jdbc.spark
 import java.sql.Connection
 
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.apache.spark.SparkFunSuite
 import org.apache.spark.sql.test.SharedSparkSession
 
