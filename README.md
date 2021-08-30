@@ -9,7 +9,7 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 [Apache Spark](https://spark.apache.org/) is a unified analytics engine for large-scale data processing.
 
-There are three version sets of the connector available through Maven, a 2.4.x, a 3.0.x and a 3.1.x compatible version. Both versions can be found [here](https://search.maven.org/search?q=spark-mssql-connector) and can be imported using the coordinates below:
+There are three version sets of the connector available through Maven, a 2.4.x, a 3.0.x and a 3.1.x compatible version. All versions can be found [here](https://search.maven.org/search?q=spark-mssql-connector) and can be imported using the coordinates below:
 
 | Connector | Maven Coordinate | Scala Version |
 | --------- | ---------------- | ------------- |
