@@ -181,8 +181,10 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
                appId: String,
                dbtable: String,
                index:Int) : String = {
+    // remove square brackets in db / schema / table name
+    val dbtableNew = dbtable.replaceAll("[\\[\\]]", "")
     // Global table names in SQLServer are prefixed with ##
-    s"[##${appId}_${dbtable}_${index}]"
+    s"[##${appId}_${dbtableNew}_${index}]"
   }
 
   /**
