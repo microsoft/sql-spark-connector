@@ -1,7 +1,7 @@
 ## V 1.2.0
 Added spark 3.1 support. Added brackets to staging table name for NO_DUPLICATES mode.
 
-## v 1.0.0
+## v 1.1.0
 Added profiles for spark 2.4 and spark 3.0 build. Provided test app and framework for spark mssql connector E2E tests. Added brackets to staging table name for NO_DUPLICATES mode.
 
 ## V 1.0.2
