@@ -353,3 +353,9 @@ project/project/
 project/target/
 target/
 .idea
+
+# VS Code
+.vscode
+.settings
+.classpath
+.project

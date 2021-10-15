@@ -9,17 +9,21 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 [Apache Spark](https://spark.apache.org/) is a unified analytics engine for large-scale data processing.
 
-There are two versions of the connector available through Maven, a 2.4.5 compatible version and a 3.0.0 compatible version. Both versions can be found [here](https://search.maven.org/search?q=spark-mssql-connector) and can be imported using the coordinates below:
+There are three version sets of the connector available through Maven, a 2.4.x, a 3.0.x and a 3.1.x compatible version. All versions can be found [here](https://search.maven.org/search?q=spark-mssql-connector) and can be imported using the coordinates below:
 
-| Connector | Maven Coordinate |
-| --------- | ------------------ |
-| Spark 2.4.5 compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.1` |
-| Spark 3.0.0 compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12_3.0:1.0.0-alpha` |
+| Connector | Maven Coordinate | Scala Version |
+| --------- | ---------------- | ------------- |
+| Spark 2.4.x compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.2` | 2.11 |
+| Spark 3.0.x compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12 |
+| Spark 3.1.x compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12:1.2.0` | 2.12 |
 
 ## Current Releases
 
-The Spark 2.4.5 compatible connector is on v1.0.1.
-The Spark 3.0.0 compatible connector is on v1.0.0-alpha.
+The latest Spark 2.4.x compatible connector is on v1.0.2.
+
+The latest Spark 3.0.x compatible connector is on v1.1.0.
+
+The latest Spark 3.1.x compatible connector is on v1.2.0.
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
@@ -33,7 +37,7 @@ For main changes from previous releases and known issues please refer to [CHANGE
 
 | Component | Versions Supported |
 | --------- | ------------------ |
-| Apache Spark | 2.4.5, 3.0.0 |
+| Apache Spark | 2.4.x, 3.0.x, 3.1.x |
 | Scala | 2.11, 2.12 |
 | Microsoft JDBC Driver for SQL Server | 8.4.1 |
 | Microsoft SQL Server | SQL Server 2008 or later |

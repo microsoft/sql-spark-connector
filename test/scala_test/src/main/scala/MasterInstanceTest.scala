@@ -17,6 +17,10 @@ import org.apache.spark.sql.{SparkSession, SaveMode, Row, DataFrame}
 import org.apache.spark.sql.functions.asc
 import org.apache.spark.sql.types._
 
+import java.util.concurrent.Executors
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
+
 /*
  * MasterInstanceTest
  * test cases for master instance. Most test can we used for Spark JDBC 
@@ -535,5 +539,32 @@ class MasterInstanceTest(testUtils:Connector_TestUtils) {
         assert(df_reordered.count() == result.count())
         log.info("test_gci_reordered_columns : Reordered Write overwrite without truncate")
         testUtils.drop_test_table(table_name)
+    }
+
+    // Test basic functionalities of writing to different databases in parallel
+    def test_gci_write_parallel() {
+        //Allowing a maximum of 2 threads to run
+        val executorService = Executors.newFixedThreadPool(2)
+        implicit val executionContext = ExecutionContext.fromExecutorService(executorService)
+
+        val table_name1 = s"test_write_parallel_1_${testType }"
+        val table_name2 = s"test_write_parallel_2_${testType }"
+        val df = testUtils.create_toy_df()
+        val futureA = Future {
+            testUtils.df_write(df, SaveMode.Overwrite, table_name1)
+        }
+        val futureB = Future {
+            testUtils.df_write(df, SaveMode.Overwrite, table_name2)
+        }
+        Await.result(futureA, Duration.Inf)
+        Await.result(futureB, Duration.Inf)
+
+        var result1 = testUtils.df_read(table_name1)
+        assert(df.schema == result1.schema)
+        var result2 = testUtils.df_read(table_name2)
+        assert(df.schema == result2.schema)
+        log.info("test_write_parallel : Exit")
+        testUtils.drop_test_table(table_name1)
+        testUtils.drop_test_table(table_name2)
     }
 }

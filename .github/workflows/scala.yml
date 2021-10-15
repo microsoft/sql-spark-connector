@@ -8,8 +8,13 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+        profile: ['spark31']
+    timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v2
@@ -17,5 +22,5 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Run tests
-      run: sbt test
+    - name: Build and run tests
+      run: mvn clean package -P ${{ matrix.profile }}
