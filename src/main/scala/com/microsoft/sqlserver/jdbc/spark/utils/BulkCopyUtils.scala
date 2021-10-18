@@ -180,43 +180,48 @@ object BulkCopyUtils extends Logging {
     }
 
     /**
-    * getComputedCols
-    * utility function to get computed columns.
-     * Use computed column names to exclude computed column when matching schema.
+    * getAutoCols
+    * utility function to get auto generated  columns.
+     * Use auto generated column names to exclude them when matching schema.
     */
-    private[spark] def getComputedCols(
+    private[spark] def getAutoCols(
         conn: Connection, 
         table: String): List[String] = {
-        val queryStr = s"SELECT name FROM sys.computed_columns WHERE object_id = OBJECT_ID('${table}');"
-        val computedColRs = conn.createStatement.executeQuery(queryStr)
-        val computedCols = ListBuffer[String]()
-        while (computedColRs.next()) {
-            val colName = computedColRs.getString("name")
-            computedCols.append(colName)
+        val queryStr = s"""
+                   SELECT name FROM sys.columns
+                   WHERE object_id = OBJECT_ID('${table}')
+                    AND (is_computed = 1 -- computed column
+                        OR generated_always_type > 0) -- generated always / temporal table
+                    """
+        val autoColRs = conn.createStatement.executeQuery(queryStr)
+        val autoCols = ListBuffer[String]()
+        while (autoColRs.next()) {
+            val colName = autoColRs.getString("name")
+            autoCols.append(colName)
         }
-        computedCols.toList
+        autoCols.toList
     }
 
     /**
-     * dfComputedColCount
-     * utility function to get number of computed columns in dataframe.
-     * Use number of computed columns in dataframe to get number of non computed column in df,
-     * and compare with the number of non computed column in sql table
+     * dfAutoColCount
+     * utility function to get number of auto generated columns in dataframe.
+     * Use number of auto generated columns in dataframe to get number of non auto generated column in df,
+     * and compare with the number of non auto generated column in sql table
      */
-    private[spark] def dfComputedColCount(
+    private[spark] def dfAutoColCount(
         dfColNames: List[String],
-        computedCols: List[String],
+        autoCols: List[String],
         dfColCaseMap: Map[String, String],
         isCaseSensitive: Boolean): Int ={
-        var dfComputedColCt = 0
-        for (j <- 0 to computedCols.length-1){
-            if (isCaseSensitive && dfColNames.contains(computedCols(j)) ||
-              !isCaseSensitive && dfColCaseMap.contains(computedCols(j).toLowerCase())
-                && dfColCaseMap(computedCols(j).toLowerCase()) == computedCols(j)) {
-                dfComputedColCt += 1
+        var dfAutoColCt = 0
+        for (j <- 0 to autoCols.length-1){
+            if (isCaseSensitive && dfColNames.contains(autoCols(j)) ||
+              !isCaseSensitive && dfColCaseMap.contains(autoCols(j).toLowerCase())
+                && dfColCaseMap(autoCols(j).toLowerCase()) == autoCols(j)) {
+                dfAutoColCt += 1
             }
         }
-        dfComputedColCt
+        dfAutoColCt
     }
 
 
@@ -303,33 +308,33 @@ object BulkCopyUtils extends Logging {
         val dfCols = df.schema
 
         val tableCols = getSchema(rs, JdbcDialects.get(url))
-        val computedCols = getComputedCols(conn, dbtable)
+        val autoCols = getAutoCols(conn, dbtable)
 
         val prefix = "Spark Dataframe and SQL Server table have differing"
 
-        if (computedCols.length == 0) {
+        if (autoCols.length == 0) {
             assertIfCheckEnabled(dfCols.length == tableCols.length, strictSchemaCheck,
                 s"${prefix} numbers of columns")
         } else if (strictSchemaCheck) {
             val dfColNames =  df.schema.fieldNames.toList
-            val dfComputedColCt = dfComputedColCount(dfColNames, computedCols, dfColCaseMap, isCaseSensitive)
-            // if df has computed column(s), check column length using non computed column in df and table.
-            // non computed column number in df: dfCols.length - dfComputedColCt
-            // non computed column number in table: tableCols.length - computedCols.length
-            assertIfCheckEnabled(dfCols.length-dfComputedColCt == tableCols.length-computedCols.length, strictSchemaCheck,
+            val dfAutoColCt = dfAutoColCount(dfColNames, autoCols, dfColCaseMap, isCaseSensitive)
+            // if df has auto generated column(s), check column length using non auto generated column in df and table.
+            // non auto generated column number in df: dfCols.length - dfAutoColCt
+            // non auto generated column number in table: tableCols.length - autoCols.length
+            assertIfCheckEnabled(dfCols.length-dfAutoColCt == tableCols.length-autoCols.length, strictSchemaCheck,
                 s"${prefix} numbers of columns")
         }
 
 
-        val result = new Array[ColumnMetadata](tableCols.length - computedCols.length)
+        val result = new Array[ColumnMetadata](tableCols.length - autoCols.length)
         var nonAutoColIndex = 0
 
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
             var dfFieldIndex = -1
-            // set dfFieldIndex = -1 for all computed columns to skip ColumnMetadata
-            if (computedCols.contains(tableColName)) {
-                logDebug(s"skipping computed col index $i col name $tableColName dfFieldIndex $dfFieldIndex")
+            // set dfFieldIndex = -1 for all auto generated columns to skip ColumnMetadata
+            if (autoCols.contains(tableColName)) {
+                logDebug(s"skipping auto generated col index $i col name $tableColName dfFieldIndex $dfFieldIndex")
             }else{
                 var dfColName:String = ""
                 if (isCaseSensitive) {
