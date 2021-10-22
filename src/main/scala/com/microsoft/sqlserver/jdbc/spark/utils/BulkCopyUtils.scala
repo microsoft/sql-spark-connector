@@ -276,30 +276,24 @@ object BulkCopyUtils extends Logging {
                 var dfFieldIndex = 0
                 var dfColName:String = ""
                 if (isCaseSensitive) {
-                    if (!dfCols.fieldNames.contains(tableColName)) {
-                        if (strictSchemaCheck) {
-                            throw new SQLException(s"SQL table column ${tableColName} not exist in df columns")
-                        } else {
-                            // when strictSchema check disabled, skip mapping / metadata if table col not in df col
-                            logDebug(s"skipping index $i sql col name $tableColName mapping and column metadata")
-                            break
-                        }
+                    if (!strictSchemaCheck && !dfCols.fieldNames.contains(tableColName)) {
+                        // when strictSchema check disabled, skip mapping / metadata if table col not in df col
+                        logDebug(s"skipping index $i sql col name $tableColName mapping and column metadata")
+                        break
                     }
+                    dfFieldIndex = dfCols.fieldIndex(tableColName)
                     dfColName = dfCols(dfFieldIndex).name
                     assertIfCheckEnabled(
                         tableColName == dfColName, strictSchemaCheck,
                         s"""${prefix} column names '${tableColName}' and
                         '${dfColName}' at column index ${i} (case sensitive)""")
                 } else {
-                    if (!dfColCaseMap.contains(tableColName.toLowerCase())) {
-                        if (strictSchemaCheck) {
-                            throw new SQLException(s"SQL table column ${tableColName} not exist in df columns")
-                        } else {
-                            // when strictSchema check disabled, skip mapping / metadata if table col not in df col
-                            logDebug(s"skipping index $i sql col name $tableColName mapping and column metadata")
-                            break
-                        }
+                    if (!strictSchemaCheck && !dfColCaseMap.contains(tableColName.toLowerCase())) {
+                        // when strictSchema check disabled, skip mapping / metadata if table col not in df col
+                        logDebug(s"skipping index $i sql col name $tableColName mapping and column metadata")
+                        break
                     }
+                    dfFieldIndex = dfCols.fieldIndex(dfColCaseMap(tableColName.toLowerCase()))
                     dfColName = dfCols(dfFieldIndex).name
                     assertIfCheckEnabled(
                         tableColName.toLowerCase() == dfColName.toLowerCase(),
