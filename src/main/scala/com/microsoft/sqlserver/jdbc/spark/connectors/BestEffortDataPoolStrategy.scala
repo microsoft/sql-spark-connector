@@ -96,7 +96,7 @@ object BestEffortDataPoolStrategy extends DataIOStrategy with Logging {
         dfColMetadata:Array[ColumnMetadata]) : Unit = {
     logInfo(s"write: to hostname $hostname")
     val url = DataPoolUtils.createDataPoolURL(hostname, options)
-    val newOptions = new SQLServerBulkJdbcOptions(options.parameters + ("url" -> url)  + ("applicationname" -> options.parameters.getOrElse("applicationname", "Spark MSSQL Connector")))
+    val newOptions = new SQLServerBulkJdbcOptions(options.parameters + ("url" -> url))
     savePartition(iterator, options.dbtable, dfColMetadata, newOptions)
   }
 
