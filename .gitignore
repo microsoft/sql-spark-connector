@@ -356,7 +356,6 @@ target/
 
 # VS Code
 .vscode
-# VS Code generated folders
 .settings
 .classpath
 .project
