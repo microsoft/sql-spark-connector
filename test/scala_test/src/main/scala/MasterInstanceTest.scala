@@ -424,8 +424,8 @@ class MasterInstanceTest(testUtils:Connector_TestUtils) {
     /*
      * OverWrite/Append and Read (OWAR) to SQL tables using 2 part names     *
      */
-    def test_gci__twoPartName_owar() {
-        val table = s"test_gci_threePartName_owar"
+    def test_gci_twoPartName_owar() {
+        val table = s"test_gci_twoPartName_owar"
         val twoPartName = testUtils.createTwoPartName(table)
         log.info(s"Tablename is $twoPartName \n")
         val df = testUtils.create_toy_df()
@@ -435,6 +435,22 @@ class MasterInstanceTest(testUtils:Connector_TestUtils) {
         val df_result = testUtils.df_read(twoPartName)
         assert(df_result.count() == 2*df.count())
         testUtils.drop_test_table(twoPartName)
+    }
+
+    /*
+     * OverWrite/Append and Read (OWAR) to SQL tables using 1 part name within square brackets     *
+     */
+    def test_gci_tbNameInBracket_owar() {
+        val table_name = s"[test_gci_tbNameInBracket_owar]"
+        log.info(s"Table name is $table_name \n")
+        val df = testUtils.create_toy_df()
+        log.info("Operation Overwrite, append and read\n")
+        testUtils.df_write(df, SaveMode.Overwrite, table_name)
+        testUtils.df_write(df, SaveMode.Append, table_name)
+        var result = testUtils.df_read(table_name)
+        assert(result.count() == 2 * df.count())
+        log.info("test_gci_tbNameInBracket_owar : Exit")
+        testUtils.drop_test_table(table_name)
     }
 
     /*
