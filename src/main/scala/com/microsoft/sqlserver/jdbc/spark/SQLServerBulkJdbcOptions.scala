@@ -72,6 +72,10 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
   val schemaCheckEnabled =
     params.getOrElse("schemaCheckEnabled", "true").toBoolean
 
+  // user input column names array to match dataframe
+  val columnsToWrite =
+    params.getOrElse("columnsToWrite", Array[String]())
+
   // Not a feature
   // Only used for internally testing data idempotency
   val testDataIdempotency =

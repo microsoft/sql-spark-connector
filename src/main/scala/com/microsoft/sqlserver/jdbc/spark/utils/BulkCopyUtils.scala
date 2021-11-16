@@ -207,24 +207,24 @@ object BulkCopyUtils extends Logging {
 
     /**
      * dfAutoColCount
-     * utility function to get number of computed columns in dataframe.
-     * Use number of computed columns in dataframe to get number of non computed column in df,
-     * and compare with the number of non computed column in sql table
+     * utility function to get number of auto columns in dataframe.
+     * Use number of auto columns in dataframe to get number of non auto columns in df,
+     * and compare with the number of non auto columns in sql table
      */
     private[spark] def dfAutoColCount(
         dfColNames: List[String],
         autoCols: List[String],
         dfColCaseMap: Map[String, String],
         isCaseSensitive: Boolean): Int ={
-        var dfComputedColCt = 0
+        var dfAutoColCt = 0
         for (j <- 0 to autoCols.length-1){
             if (isCaseSensitive && dfColNames.contains(autoCols(j)) ||
               !isCaseSensitive && dfColCaseMap.contains(autoCols(j).toLowerCase())
                 && dfColCaseMap(autoCols(j).toLowerCase()) == autoCols(j)) {
-                dfComputedColCt += 1
+                dfAutoColCt += 1
             }
         }
-        dfComputedColCt
+        dfAutoColCt
     }
 
 
@@ -271,7 +271,7 @@ object BulkCopyUtils extends Logging {
         val colMetaData = {
             if(checkSchema) {
                 checkExTableType(conn, options)
-                matchSchemas(conn, options.dbtable, df, rs, options.url, isCaseSensitive, options.schemaCheckEnabled)
+                matchSchemas(conn, options.dbtable, df, rs, options.url, isCaseSensitive, options.schemaCheckEnabled, options.columnsToWrite)
             } else {
                 defaultColMetadataMap(rs.getMetaData())
             }
@@ -297,6 +297,7 @@ object BulkCopyUtils extends Logging {
     * @param url: String,
     * @param isCaseSensitive: Boolean
     * @param strictSchemaCheck: Boolean
+    * @param columnsToWrite: Array[String]
     */
     private[spark] def matchSchemas(
             conn: Connection,
@@ -305,7 +306,8 @@ object BulkCopyUtils extends Logging {
             rs: ResultSet,
             url: String,
             isCaseSensitive: Boolean,
-            strictSchemaCheck: Boolean): Array[ColumnMetadata]= {
+            strictSchemaCheck: Boolean,
+            columnsToWrite: Array[String]): Array[ColumnMetadata]= {
         val dfColCaseMap = (df.schema.fieldNames.map(item => item.toLowerCase)
           zip df.schema.fieldNames.toList).toMap
         val dfCols = df.schema
@@ -320,23 +322,29 @@ object BulkCopyUtils extends Logging {
                 s"${prefix} numbers of columns")
         } else if (strictSchemaCheck) {
             val dfColNames =  df.schema.fieldNames.toList
-            val dfComputedColCt = dfAutoColCount(dfColNames, autoCols, dfColCaseMap, isCaseSensitive)
-            // if df has computed column(s), check column length using non computed column in df and table.
-            // non computed column number in df: dfCols.length - dfComputedColCt
-            // non computed column number in table: tableCols.length - autoCols.length
-            assertIfCheckEnabled(dfCols.length-dfComputedColCt == tableCols.length-autoCols.length, strictSchemaCheck,
+            val dfAutoColCt = dfAutoColCount(dfColNames, autoCols, dfColCaseMap, isCaseSensitive)
+            // if df has auto column(s), check column length using non auto column in df and table.
+            // non auto column number in df: dfCols.length - dfAutoColCt
+            // non auto column number in table: tableCols.length - autoCols.length
+            assertIfCheckEnabled(dfCols.length-dfAutoColCt == tableCols.length-autoCols.length, strictSchemaCheck,
                 s"${prefix} numbers of columns")
         }
 
+        if (columnsToWrite.isEmpty()) {
+            val result = new Array[ColumnMetadata](tableCols.length - autoCols.length)
+        } else {
+            val result = new Array[ColumnMetadata](columnsToWrite.size)
+        }
 
-        val result = new Array[ColumnMetadata](tableCols.length - autoCols.length)
         var nonAutoColIndex = 0
 
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
             var dfFieldIndex = -1
-            // set dfFieldIndex = -1 for all computed columns to skip ColumnMetadata
-            if (autoCols.contains(tableColName)) {
+            // set dfFieldIndex = -1 for all auto columns to skip ColumnMetadata
+            if (!columnsToWrite.isEmpty() && !columnsToWrite.contain(tableColName)) {
+                logDebug(s"skipping col index $i col name $tableColName, not provided in columnsToWrite list")
+            } else if (autoCols.contains(tableColName)) {
                 logDebug(s"skipping auto generated col index $i col name $tableColName dfFieldIndex $dfFieldIndex")
             }else{
                 var dfColName:String = ""
