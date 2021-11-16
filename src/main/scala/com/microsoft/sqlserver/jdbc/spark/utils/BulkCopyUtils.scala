@@ -274,7 +274,7 @@ object BulkCopyUtils extends Logging {
     * @param url: String,
     * @param isCaseSensitive: Boolean
     * @param strictSchemaCheck: Boolean
-    * @param columnsToWrite: Set[String]
+    * @param columnsToWrite: String
     */
     private[spark] def matchSchemas(
             conn: Connection,
@@ -284,7 +284,7 @@ object BulkCopyUtils extends Logging {
             url: String,
             isCaseSensitive: Boolean,
             strictSchemaCheck: Boolean,
-            columnsToWrite: Set[String]): Array[ColumnMetadata]= {
+            columnsToWrite: String): Array[ColumnMetadata]= {
         val dfColCaseMap = (df.schema.fieldNames.map(item => item.toLowerCase)
           zip df.schema.fieldNames.toList).toMap
         val dfCols = df.schema
@@ -292,16 +292,18 @@ object BulkCopyUtils extends Logging {
         val tableCols = getSchema(rs, JdbcDialects.get(url))
         val autoCols = getAutoCols(conn, dbtable)
 
+        val columnsToWriteSet = columnsToWrite.split(",").toSet
+
         val prefix = "Spark Dataframe and SQL Server table have differing"
 
         // auto columns should not exist in df
         assertIfCheckEnabled(dfCols.length + autoCols.length == tableCols.length, strictSchemaCheck,
             s"${prefix} numbers of columns")
 
-        if (columnsToWrite.isEmpty()) {
+        if (columnsToWriteSet.isEmpty()) {
             val result = new Array[ColumnMetadata](tableCols.length - autoCols.length)
         } else {
-            val result = new Array[ColumnMetadata](columnsToWrite.size)
+            val result = new Array[ColumnMetadata](columnsToWriteSet.size)
         }
 
         var nonAutoColIndex = 0
@@ -309,7 +311,7 @@ object BulkCopyUtils extends Logging {
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
             var dfFieldIndex = -1
-            if (!columnsToWrite.isEmpty() && !columnsToWrite.contains(tableColName)) {
+            if (!columnsToWriteSet.isEmpty() && !columnsToWriteSet.contains(tableColName)) {
                 // if columnsToWrite provided, and column name not in it, skip column mapping and ColumnMetadata
                 logDebug(s"skipping col index $i col name $tableColName, user not provided in columnsToWrite list")
             } else if (autoCols.contains(tableColName)) {

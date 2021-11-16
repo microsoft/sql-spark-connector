@@ -74,7 +74,7 @@ class SQLServerBulkJdbcOptions(val params: CaseInsensitiveMap[String])
 
   // user input column names array to match dataframe
   val columnsToWrite =
-    params.getOrElse("columnsToWrite", Array[String]()).toSet
+    params.getOrElse("columnsToWrite", "").toString
 
   // Not a feature
   // Only used for internally testing data idempotency
