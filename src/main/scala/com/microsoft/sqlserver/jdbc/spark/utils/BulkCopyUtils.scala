@@ -206,29 +206,6 @@ object BulkCopyUtils extends Logging {
     }
 
     /**
-     * dfAutoColCount
-     * utility function to get number of auto columns in dataframe.
-     * Use number of auto columns in dataframe to get number of non auto columns in df,
-     * and compare with the number of non auto columns in sql table
-     */
-    private[spark] def dfAutoColCount(
-        dfColNames: List[String],
-        autoCols: List[String],
-        dfColCaseMap: Map[String, String],
-        isCaseSensitive: Boolean): Int ={
-        var dfAutoColCt = 0
-        for (j <- 0 to autoCols.length-1){
-            if (isCaseSensitive && dfColNames.contains(autoCols(j)) ||
-              !isCaseSensitive && dfColCaseMap.contains(autoCols(j).toLowerCase())
-                && dfColCaseMap(autoCols(j).toLowerCase()) == autoCols(j)) {
-                dfAutoColCt += 1
-            }
-        }
-        dfAutoColCt
-    }
-
-
-    /**
      * getColMetadataMap
      * Utility function convert result set meta data to array.
      */
@@ -297,7 +274,7 @@ object BulkCopyUtils extends Logging {
     * @param url: String,
     * @param isCaseSensitive: Boolean
     * @param strictSchemaCheck: Boolean
-    * @param columnsToWrite: Array[String]
+    * @param columnsToWrite: Set[String]
     */
     private[spark] def matchSchemas(
             conn: Connection,
@@ -307,7 +284,7 @@ object BulkCopyUtils extends Logging {
             url: String,
             isCaseSensitive: Boolean,
             strictSchemaCheck: Boolean,
-            columnsToWrite: Array[String]): Array[ColumnMetadata]= {
+            columnsToWrite: Set[String]): Array[ColumnMetadata]= {
         val dfColCaseMap = (df.schema.fieldNames.map(item => item.toLowerCase)
           zip df.schema.fieldNames.toList).toMap
         val dfCols = df.schema
@@ -317,18 +294,9 @@ object BulkCopyUtils extends Logging {
 
         val prefix = "Spark Dataframe and SQL Server table have differing"
 
-        if (autoCols.length == 0) {
-            assertIfCheckEnabled(dfCols.length == tableCols.length, strictSchemaCheck,
-                s"${prefix} numbers of columns")
-        } else if (strictSchemaCheck) {
-            val dfColNames =  df.schema.fieldNames.toList
-            val dfAutoColCt = dfAutoColCount(dfColNames, autoCols, dfColCaseMap, isCaseSensitive)
-            // if df has auto column(s), check column length using non auto column in df and table.
-            // non auto column number in df: dfCols.length - dfAutoColCt
-            // non auto column number in table: tableCols.length - autoCols.length
-            assertIfCheckEnabled(dfCols.length-dfAutoColCt == tableCols.length-autoCols.length, strictSchemaCheck,
-                s"${prefix} numbers of columns")
-        }
+        // auto columns should not exist in df
+        assertIfCheckEnabled(dfCols.length + autoCols.length == tableCols.length, strictSchemaCheck,
+            s"${prefix} numbers of columns")
 
         if (columnsToWrite.isEmpty()) {
             val result = new Array[ColumnMetadata](tableCols.length - autoCols.length)
@@ -341,10 +309,11 @@ object BulkCopyUtils extends Logging {
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
             var dfFieldIndex = -1
-            // set dfFieldIndex = -1 for all auto columns to skip ColumnMetadata
-            if (!columnsToWrite.isEmpty() && !columnsToWrite.contain(tableColName)) {
-                logDebug(s"skipping col index $i col name $tableColName, not provided in columnsToWrite list")
+            if (!columnsToWrite.isEmpty() && !columnsToWrite.contains(tableColName)) {
+                // if columnsToWrite provided, and column name not in it, skip column mapping and ColumnMetadata
+                logDebug(s"skipping col index $i col name $tableColName, user not provided in columnsToWrite list")
             } else if (autoCols.contains(tableColName)) {
+                // if auto columns, skip column mapping and ColumnMetadata
                 logDebug(s"skipping auto generated col index $i col name $tableColName dfFieldIndex $dfFieldIndex")
             }else{
                 var dfColName:String = ""
