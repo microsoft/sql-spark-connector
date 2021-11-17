@@ -293,6 +293,7 @@ object BulkCopyUtils extends Logging {
         val autoCols = getAutoCols(conn, dbtable)
 
         val columnsToWriteSet = columnsToWrite.split(",").toSet
+        logDebug(s"columnsToWrite: $columnsToWriteSet")
 
         val prefix = "Spark Dataframe and SQL Server table have differing"
 
@@ -300,10 +301,11 @@ object BulkCopyUtils extends Logging {
         assertIfCheckEnabled(dfCols.length + autoCols.length == tableCols.length, strictSchemaCheck,
             s"${prefix} numbers of columns")
 
-        if (columnsToWriteSet.isEmpty()) {
-            val result = new Array[ColumnMetadata](tableCols.length - autoCols.length)
-        } else {
+        // if columnsToWrite provided by user, use it for metadata mapping. If not, use sql table.
+        if (columnsToWrite == "") {
             val result = new Array[ColumnMetadata](columnsToWriteSet.size)
+        } else {
+            val result = new Array[ColumnMetadata](tableCols.length - autoCols.length)
         }
 
         var nonAutoColIndex = 0
@@ -311,7 +313,7 @@ object BulkCopyUtils extends Logging {
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
             var dfFieldIndex = -1
-            if (!columnsToWriteSet.isEmpty() && !columnsToWriteSet.contains(tableColName)) {
+            if (!columnsToWriteSet.isEmpty && !columnsToWriteSet.contains(tableColName)) {
                 // if columnsToWrite provided, and column name not in it, skip column mapping and ColumnMetadata
                 logDebug(s"skipping col index $i col name $tableColName, user not provided in columnsToWrite list")
             } else if (autoCols.contains(tableColName)) {
