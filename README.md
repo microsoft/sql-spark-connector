@@ -25,7 +25,7 @@ The latest Spark 3.0.x compatible connector is on v1.1.0.
 
 The latest Spark 3.1.x compatible connector is on v1.2.0.
 
-For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
+For main changes from previous releases and known issues please refer to [CHANGELIST](CHANGELIST.md)
 
 ## Supported Features
 * Support for all Spark bindings (Scala, Python, R)
@@ -89,7 +89,7 @@ This issue arises from using an older version of the mssql driver (which is now 
 
 Steps to fix the issue:
 
-1. If you are using a generic Hadoop environment, check and remove the mssql jar: `rm $HADOOP_HOME/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar`. 
+1. If you are using a generic Hadoop environment, check and remove the mssql jar: `rm $HADOOP_HOME/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar`.
 If you are using Databricks, add a global or cluster init script to remove old versions of the mssql driver from the `/databricks/jars` folder, or add this line to an existing script: `rm /databricks/jars/*mssql*`
 2. Add the `adal4j` and `mssql` packages, I used Maven, but anyway should work. DO NOT install the SQL spark connector this way.
 3. Add the driver class to your connection configuration:
@@ -112,7 +112,7 @@ To include the connector in your projects download this repository and build the
 
 #### Receiving `java.lang.NoClassDefFoundError` when trying to use the new connector with Azure Databricks?
 
-If you are migrating from the previous Azure SQL Connector for Spark and have manually installed drivers onto that cluster for AAD compatibility, you will most likely need to remove those custom drivers, restore the previous drivers that ship by default with Databricks, uninstall the previous connector, and restart your cluster.  You may be better off spinning up a new cluster. 
+If you are migrating from the previous Azure SQL Connector for Spark and have manually installed drivers onto that cluster for AAD compatibility, you will most likely need to remove those custom drivers, restore the previous drivers that ship by default with Databricks, uninstall the previous connector, and restart your cluster.  You may be better off spinning up a new cluster.
 
 With this new connector, you should be able to simply install onto a cluster (new or existing cluster that hasn't had its drivers modified) or a cluster which previously used modified drivers for the older Azure SQL Connector for Spark provided the modified drivers were removed and the previous default drivers restored.
 
@@ -221,7 +221,7 @@ Active Directory.
 
 For **Scala,** the `com.microsoft.aad.adal4j` artifact will need to be installed.
 
-For **Python,** the `adal` library will need to be installed.  This is available 
+For **Python,** the `adal` library will need to be installed.  This is available
 via pip.
 
 
