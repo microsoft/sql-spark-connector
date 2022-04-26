@@ -25,7 +25,7 @@ The latest Spark 3.0.x compatible connector is on v1.1.0.
 
 The latest Spark 3.1.x compatible connector is on v1.2.0.
 
-For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
+For main changes from previous releases and known issues please refer to [CHANGELIST](CHANGELIST.md)
 
 ## Supported Features
 * Support for all Spark bindings (Scala, Python, R)
