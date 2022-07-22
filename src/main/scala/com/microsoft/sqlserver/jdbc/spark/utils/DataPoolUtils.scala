@@ -18,12 +18,12 @@ import java.nio.file.{Files, Paths}
 
 import org.apache.spark.deploy.history.LogInfo
 import org.apache.spark.internal.Logging
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.createConnectionFactory
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 import scala.annotation.tailrec
 import scala.io.Source
+import org.apache.spark.sql.jdbc.JdbcDialects
 
 /** 
 * DataPoolUtils
@@ -38,7 +38,9 @@ object DataPoolUtils extends Logging {
   def getDataPoolNodeList(options:SQLServerBulkJdbcOptions): List[String] = {
     logInfo(s"Searching DMV for data pools \n")
     import scala.collection.mutable.ListBuffer
-    val stmt = createConnectionFactory(options)().createStatement()
+    val dialect = JdbcDialects.get(options.url)
+    val conn = dialect.createConnectionFactory(options)(-1)
+    val stmt = conn.createStatement()
     var nodeList = new ListBuffer[String]()
     val query = s"select address from sys.dm_db_data_pool_nodes"
     try {

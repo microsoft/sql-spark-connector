@@ -19,7 +19,7 @@ import org.apache.spark.internal.Logging
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.sql.types.{ByteType, DataType, ShortType, StructType}
 import org.apache.spark.sql.jdbc.JdbcDialects
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{createConnectionFactory, getSchema, schemaString}
+import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{getSchema, schemaString}
 import com.microsoft.sqlserver.jdbc.{SQLServerBulkCopy, SQLServerBulkCopyOptions}
 
 import scala.collection.mutable.ListBuffer
@@ -47,7 +47,8 @@ object BulkCopyUtils extends Logging {
         options: SQLServerBulkJdbcOptions ): Unit = {
 
         logDebug("savePartition:Entered")
-        val conn = createConnectionFactory(options)()
+        val dialect = JdbcDialects.get(options.url)
+        val conn = dialect.createConnectionFactory(options)(-1)
         conn.setAutoCommit(false)
         conn.setTransactionIsolation(options.isolationLevel)
         var committed = false
