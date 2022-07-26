@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  sql-server:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    environment:
+      SA_PASSWORD: 'secure_password_123'
+      ACCEPT_EULA: 'Y'
+      MSSQL_PID: 'Standard'
+    ports:
+      - '1433:1433'
