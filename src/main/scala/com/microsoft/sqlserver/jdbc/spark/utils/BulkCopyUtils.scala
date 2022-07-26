@@ -13,15 +13,15 @@
 */
 package com.microsoft.sqlserver.jdbc.spark
 
-import java.sql.{Connection, ResultSet, ResultSetMetaData, SQLException}
-
-import org.apache.spark.internal.Logging
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
-import org.apache.spark.sql.types.{ByteType, DataType, ShortType, StructType}
-import org.apache.spark.sql.jdbc.JdbcDialects
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{createConnectionFactory, getSchema, schemaString}
+import com.microsoft.sqlserver.jdbc.spark.utils.JdbcUtils.createConnection
 import com.microsoft.sqlserver.jdbc.{SQLServerBulkCopy, SQLServerBulkCopyOptions}
+import org.apache.spark.internal.Logging
+import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{getSchema, schemaString}
+import org.apache.spark.sql.jdbc.JdbcDialects
+import org.apache.spark.sql.types.{ByteType, ShortType}
+import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 
+import java.sql.{Connection, ResultSet, ResultSetMetaData, SQLException}
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -47,7 +47,7 @@ object BulkCopyUtils extends Logging {
         options: SQLServerBulkJdbcOptions ): Unit = {
 
         logDebug("savePartition:Entered")
-        val conn = createConnectionFactory(options)()
+        val conn = createConnection(options)
         conn.setAutoCommit(false)
         conn.setTransactionIsolation(options.isolationLevel)
         var committed = false

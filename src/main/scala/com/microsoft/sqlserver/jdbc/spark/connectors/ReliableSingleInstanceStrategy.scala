@@ -13,13 +13,13 @@
 */
 package com.microsoft.sqlserver.jdbc.spark
 
-import java.sql.{Connection, ResultSetMetaData, SQLException}
-
 import com.microsoft.sqlserver.jdbc.spark.BulkCopyUtils.{executeUpdate, savePartition}
+import com.microsoft.sqlserver.jdbc.spark.utils.JdbcUtils.createConnection
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.createConnectionFactory
 import org.apache.spark.sql.{DataFrame, Row}
+
+import java.sql.{Connection, SQLException}
 
 /**
  * Implements the Reliable write strategy for Single Instances that's that's resilient to executor restart.
@@ -49,7 +49,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
          appId: String): Unit = {
     logInfo("write : reliable write to single instance called")
     // Initialize - create connection and cleanup existing tables if any
-    val conn = createConnectionFactory(options)()
+    val conn = createConnection(options)
     val stagingTableList = getStagingTableNames(appId, options.dbtable, df.rdd.getNumPartitions)
     cleanupStagingTables(conn, stagingTableList, options)
     createStagingTables(conn, stagingTableList,options)
@@ -125,7 +125,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
                dfColMetaData: Array[ColumnMetadata],
                options: SQLServerBulkJdbcOptions): Unit = {
     logDebug(s"idempotentInsertToTable : Started")
-    val conn = createConnectionFactory(options)()
+    val conn = createConnection(options)
     try {
       BulkCopyUtils.mssqlTruncateTable(conn, tableName)
     } catch {
@@ -151,7 +151,7 @@ object ReliableSingleInstanceStrategy extends  DataIOStrategy with Logging {
                 options: SQLServerBulkJdbcOptions): Unit = {
     logInfo("unionStagingTables: insert to final table")
     val insertStmt = stmtInsertWithUnion(stagingTableList, dfColMetadata, options)
-    val conn = createConnectionFactory(options)()
+    val conn = createConnection(options)
     executeUpdate(conn,insertStmt)
   }
 
