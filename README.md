@@ -36,13 +36,13 @@ For main changes from previous releases and known issues please refer to [CHANGE
 * Reliable connector support for Sql Server Single Instance
 
 
-| Component | Versions Supported |
-| --------- | ------------------ |
-| Apache Spark | 2.4.x, 3.0.x, 3.1.x |
-| Scala | 2.11, 2.12 |
-| Microsoft JDBC Driver for SQL Server | 8.4.1 |
-| Microsoft SQL Server | SQL Server 2008 or later |
-| Azure SQL Databases | Supported |
+| Component                            | Versions Supported         |
+|--------------------------------------|----------------------------|
+| Apache Spark                         | 2.4.x, 3.0.x, 3.1.x, 3.3.x |
+| Scala                                | 2.11, 2.12                 |
+| Microsoft JDBC Driver for SQL Server | 8.4.1                      |
+| Microsoft SQL Server                 | SQL Server 2008 or later   |
+| Azure SQL Databases                  | Supported                  |
 
 *Note: Azure Synapse (Azure SQL DW) use is not tested with this connector. While it may work, there may be unintended consequences.*
 
