@@ -1,6 +1,7 @@
-package com.microsoft.sqlserver.jdbc.spark.utils
+package com.microsoft.sqlserver.jdbc.spark.integration.utils
 
 import com.microsoft.sqlserver.jdbc.spark.SQLServerBulkJdbcOptions
+import com.microsoft.sqlserver.jdbc.spark.utils.JdbcUtils
 import org.apache.spark.SparkFunSuite
 
 /**

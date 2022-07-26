@@ -11,12 +11,14 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.microsoft.sqlserver.jdbc.spark
-import java.sql.Connection
+package com.microsoft.sqlserver.jdbc.spark.unit.bulkwrite
 
-import org.scalatest.matchers.should.Matchers
+import com.microsoft.sqlserver.jdbc.spark.{BulkCopyUtils, DataPoolUtils, SQLServerBulkJdbcOptions}
 import org.apache.spark.SparkFunSuite
 import org.apache.spark.sql.test.SharedSparkSession
+import org.scalatest.matchers.should.Matchers
+
+import java.sql.Connection
 
 class DataSourceTest extends SparkFunSuite with Matchers with SharedSparkSession {
 
