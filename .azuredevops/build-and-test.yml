@@ -11,6 +11,7 @@ pool:
 
 steps:
 - task: Maven@3
+  displayName: Maven Build and Test
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
