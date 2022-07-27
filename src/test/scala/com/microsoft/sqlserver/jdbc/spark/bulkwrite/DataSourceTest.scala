@@ -20,10 +20,6 @@ import org.apache.spark.sql.test.SharedSparkSession
 
 class DataSourceTest extends SparkFunSuite with Matchers with SharedSparkSession {
 
-  test("stuff") {
-    throw new Exception
-  }
-
   test("Schema validation between Spark DataFrame and SQL Server ResultSet") {}
 
   test("JdbcBulkOptions should have proper Bulk configurations") {
