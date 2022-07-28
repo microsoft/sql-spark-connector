@@ -246,3 +246,15 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Getting started
+
+- Install Java 8 (e.g. with [sdkman](https://sdkman.io/): `sdk install java 8.0.342-zulu` and `sdk use java 8.0.342-zulu`)
+- Install Scala 2.12, SBT, Maven (e.g. on Mac with Homebrew `brew install maven scala@2.12 sbt`)
+
+# Releasing a new version
+
+- Make sure all your local changes are committed
+- Make sure that the version number in the pom.xml ends with `-SNAPSHOT`, so e.g. `1.2.0-SNAPSHOT` - the version without -SNAPSHOT is the one that is going to be published, so `1.2.0` in this case
+- Run `mvn release:clean`
+- Run `mvn release:prepare`
