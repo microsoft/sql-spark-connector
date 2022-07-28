@@ -258,7 +258,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 - Make sure you have `gpg` installed (e.g. on Mac with Homebrew `brew install gpg`)
 - Install the Solytic GPG key
-- Connect to the artifact feed (see [here](https://dev.azure.com/solytic/OpenSource/_artifacts/feed/solytic/connect/maven))
+- Connect to the artifact feed (see [here](https://dev.azure.com/solytic/OpenSource/_artifacts/feed/solytic-oss/connect))
 
 ## Steps to create a release
 
