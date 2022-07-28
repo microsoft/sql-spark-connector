@@ -254,7 +254,11 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 # Releasing a new version
 
+- Make sure you have `gpg` installed (e.g. on Mac with Homebrew `brew install gpg`)
 - Make sure all your local changes are committed
 - Make sure that the version number in the pom.xml ends with `-SNAPSHOT`, so e.g. `1.2.0-SNAPSHOT` - the version without -SNAPSHOT is the one that is going to be published, so `1.2.0` in this case
+- Since the tests will be executed during the release, run `docker compose up -d` to start the Docker setup
 - Run `mvn release:clean`
-- Run `mvn release:prepare`
+- Run `mvn release:prepare` (on Mac, you need to run `GPG_TTY=$(tty) mvn release:prepare`, see [here](https://stackoverflow.com/questions/57591432/gpg-signing-failed-inappropriate-ioctl-for-device-on-macos-with-maven))
+  - This will ask you for the version number to be published, the new version, etc.
+  - It will also run the tests

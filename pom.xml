@@ -69,7 +69,7 @@
     </developers>
     <scm>
         <connection>scm:git:git://github.com/solytic/sql-spark-connector.git</connection>
-        <developerConnection>scm:git:ssh://github.com:solytic/sql-spark-connector.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com/solytic/sql-spark-connector.git</developerConnection>
         <url>http://github.com/solytic/sql-spark-connector/tree/master</url>
       <tag>spark-mssql-connector-1.2.0</tag>
   </scm>
