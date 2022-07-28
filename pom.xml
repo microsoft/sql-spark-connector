@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.microsoft.azure</groupId>
+    <groupId>com.solytic</groupId>
     <artifactId>spark-mssql-connector</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.0</version>
+    <version>1.2.0-SNAPSHOT</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The Apache Spark Connector for SQL Server and Azure SQL is a high-performance connector that enables you to use transactional data in big data analytics and persists results for ad-hoc queries or reporting.</description>
     <url>https://github.com/microsoft/sql-spark-connector</url>
     <organization>
-        <name>com.microsoft.azure</name>
+        <name>com.solytic</name>
     </organization>
     <licenses>
         <license>
@@ -68,9 +68,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/microsoft/sql-spark-connector.git</connection>
-        <developerConnection>scm:git:ssh://github.com:microsoft/sql-spark-connector.git</developerConnection>
-        <url>http://github.com/microsoft/sql-spark-connector/tree/master</url>
+        <connection>scm:git:git://github.com/solytic/sql-spark-connector.git</connection>
+        <developerConnection>scm:git:ssh://github.com:solytic/sql-spark-connector.git</developerConnection>
+        <url>http://github.com/solytic/sql-spark-connector/tree/master</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>
