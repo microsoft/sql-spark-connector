@@ -328,7 +328,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 * Make sure you have `gpg` installed (e.g. on Mac with Homebrew `brew install gpg`)
 * Install the Solytic GPG key
-* Connect to the artifact feed (see [here](https://dev.azure.com/solytic/OpenSource/_artifacts/feed/feed/connect/maven))
+* Connect to the artifact feed (see [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry))
 
 ### Steps to create a release
 
@@ -338,7 +338,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 3. Since the tests will be executed during the release, run `docker compose up -d` to start the Docker setup
 4. Run `mvn release:clean`
 5. Run `mvn release:prepare` to prepare the release, which will increment the version, create a tag in Git, etc.
-  * **Note**: on Mac, you need to run `GPG_TTY=$(tty) mvn release:prepare`, see [here](https://stackoverflow.com/questions/57591432/gpg-signing-failed-inappropriate-ioctl-for-device-on-macos-with-maven)
-  * This will ask you for the version number to be published, the new version, etc.
-  * It will also run the tests
-  * Run `mvn release:perform` to create the release
+   * **Note**: on Mac, you need to run `GPG_TTY=$(tty) mvn release:prepare`, see [here](https://stackoverflow.com/questions/57591432/gpg-signing-failed-inappropriate-ioctl-for-device-on-macos-with-maven)
+   * This will ask you for the version number to be published, the new version, etc.
+   * It will also run the tests
+   * Run `mvn release:perform` to create the release
+6. Create a release on GitHub and add the release notes

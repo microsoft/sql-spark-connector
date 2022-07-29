@@ -4,7 +4,7 @@
     <groupId>com.solytic</groupId>
     <artifactId>spark-mssql-connector</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The Apache Spark Connector for SQL Server and Azure SQL is a high-performance connector that enables you to use transactional data in big data analytics and persists results for ad-hoc queries or reporting.</description>
     <url>https://github.com/microsoft/sql-spark-connector</url>
@@ -75,12 +75,12 @@
   </scm>
     <distributionManagement>
         <snapshotRepository>
-            <id>feed</id>
-            <url>https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/feed/maven/v1</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/solytic/sql-spark-connector</url>
         </snapshotRepository>
         <repository>
-            <id>feed</id>
-            <url>https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/feed/maven/v1</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/solytic/sql-spark-connector</url>
         </repository>
     </distributionManagement>
     <build>
