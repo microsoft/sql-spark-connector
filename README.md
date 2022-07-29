@@ -46,13 +46,14 @@ These are the currently available versions of the connector.
 |------------------------|--------------------------------------------------------|---------------|---------------------------------------------------------------|
 | Spark 2.4.x compatible | `com.microsoft.azure:spark-mssql-connector:1.0.2`      | 2.11          | [Microsoft](https://github.com/microsoft/sql-spark-connector) |
 | Spark 3.0.x compatible | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12          | [Microsoft](https://github.com/microsoft/sql-spark-connector) |
-| Spark 3.1.x compatible | `com.solytic:spark-mssql-connector_2.12:1.2.0`         | 2.12          | [Solytic](https://github.com/solytic/sql-spark-connector)     |
+| Spark 3.1.x compatible | `com.microsoft.azure:spark-mssql-connector_2.12:1.2.0` | 2.12          | [Microsoft](https://github.com/microsoft/sql-spark-connector) |
+| Spark 3.1.x compatible | `com.solytic:spark-mssql-connector_2.12:1.2.1`         | 2.12          | [Solytic](https://github.com/solytic/sql-spark-connector)     |
 
 ## Current Releases
 
 * The latest Spark 2.4.x compatible connector is on v1.0.2, available through Microsoft
 * The latest Spark 3.0.x compatible connector is on v1.1.0, available through Microsoft
-* The latest Spark 3.1.x compatible connector is on v1.2.0, available through Microsoft or Solytic
+* The latest Spark 3.1.x compatible connector is on v1.2.x, available through Microsoft or Solytic
 
 For main changes from previous releases and known issues please refer to [CHANGELIST](docs/CHANGELIST.md)
 
