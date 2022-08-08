@@ -75,12 +75,12 @@
   </scm>
     <distributionManagement>
         <snapshotRepository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/solytic/sql-spark-connector</url>
+            <id>devops-snapshots</id>
+            <url>https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/snapshots/maven/v1</url>
         </snapshotRepository>
         <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/solytic/sql-spark-connector</url>
+            <id>devops-releases</id>
+            <url>https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/releases/maven/v1</url>
         </repository>
     </distributionManagement>
     <build>
