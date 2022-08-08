@@ -25,19 +25,16 @@ the repository to your `pom.xml` or your `build.sbt`:
 <!-- Add to the pom.xml -->
 <repository>
   <id>feed</id>
-  <url>https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/feed/maven/v1</url>
+  <url>https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/releases/maven/v1</url>
   <releases>
     <enabled>true</enabled>
   </releases>
-  <snapshots>
-    <enabled>true</enabled>
-  </snapshots>
 </repository>
 ```
 
 ```scala
 // add to the build.sbt
-resolvers += "Solytic OpenSource Feed" at "https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/feed/maven/v1"
+resolvers += "Solytic OpenSource Feed" at "https://pkgs.dev.azure.com/solytic/OpenSource/_packaging/releases/maven/v1"
 ```
 
 These are the currently available versions of the connector.
@@ -328,7 +325,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 * Make sure you have `gpg` installed (e.g. on Mac with Homebrew `brew install gpg`)
 * Install the Solytic GPG key
-* Connect to the artifact feed (see [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry))
+* Connect to the artifact feed (see [here](https://dev.azure.com/solytic/OpenSource/_artifacts/feed/releases/connect/maven))
 
 ### Steps to create a release
 
