@@ -56,6 +56,7 @@ In addition following options are supported
 | isolationLevel | "READ_COMMITTED" | Specify the isolation level |
 | tableLock | "false" | Implements an insert with TABLOCK option to improve write performance |
 | schemaCheckEnabled | "true" | Disables strict dataframe and sql table schema check when set to false |
+| columnsToWrite | "" | Enable user defined column mapping. Users provide list of column names and only write to these columns.|
 
 Other [Bulk api options](https://docs.microsoft.com/en-us/sql/connect/jdbc/using-bulk-copy-with-the-jdbc-driver?view=sql-server-2017#sqlserverbulkcopyoptions) can be set as options on the dataframe and will be passed to bulkcopy apis on write
 

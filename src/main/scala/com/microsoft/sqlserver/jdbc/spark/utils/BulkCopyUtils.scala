@@ -283,7 +283,7 @@ object BulkCopyUtils extends Logging {
         for (i <- 0 to tableCols.length-1) {
             val tableColName = tableCols(i).name
             var dfFieldIndex = -1
-            // if columnsToWrite provided, and column name not in it, skip column mapping and ColumnMetadata
+            // if columnsToWrite option provided, and sql column names not in it, skip this column mapping and ColumnMetadata
             if (!columnsToWrite.isEmpty && !columnsToWriteSet.contains(tableColName)) {
                 logDebug(s"skipping col index $i col name $tableColName, user not provided in columnsToWrite list")
             }else{
