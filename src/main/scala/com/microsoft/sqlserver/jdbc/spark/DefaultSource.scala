@@ -17,9 +17,9 @@ import java.sql.{Connection, ResultSet, SQLException}
 
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.{SQLContext, DataFrame, SaveMode}
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.createConnectionFactory
 import org.apache.spark.sql.execution.datasources.jdbc.JdbcRelationProvider
 import org.apache.spark.sql.sources.BaseRelation
+import org.apache.spark.sql.jdbc.JdbcDialects
 
 import com.microsoft.sqlserver.jdbc.spark.BulkCopyUtils._
 
@@ -56,7 +56,8 @@ class DefaultSource extends JdbcRelationProvider with Logging {
         // if no user input app name provided, will use SparkMSSQLConnector:NotSpecified
         val applicationName = s"SparkMSSQLConnector:${parameters.getOrElse("applicationname", "NotSpecified")}"
         val options = new SQLServerBulkJdbcOptions(parameters  + ("applicationname" -> applicationName))
-        val conn = createConnectionFactory(options)()
+        val dialect = JdbcDialects.get(options.url)
+        val conn = dialect.createConnectionFactory(options)(-1)
         val df = repartitionDataFrame(rawDf, options)
 
         logInfo(s"JDBC Driver major/mior version " +
