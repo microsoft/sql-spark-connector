@@ -123,14 +123,14 @@
     </build>
     <profiles>
         <profile>
-            <id>spark31</id>
+            <id>spark33</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <scala.binary.version>2.12</scala.binary.version>
                 <scala.version>2.12.11</scala.version>
-                <spark.version>3.1.2</spark.version>
+                <spark.version>3.3.0</spark.version>
             </properties>
         </profile>
     </profiles>

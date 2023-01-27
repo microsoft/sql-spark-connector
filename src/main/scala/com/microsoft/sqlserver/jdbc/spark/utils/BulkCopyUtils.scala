@@ -35,7 +35,7 @@ object BulkCopyUtils extends Logging {
     * a connection, sets connection properties and does a BulkWrite. Called when writing data to 
     * master instance and data pools both. URL in options is used to create the relevant connection.
     *
-    * @param itertor - iterator for row of the partition.
+    * @param iterator - iterator for row of the partition.
     * @param dfColMetadata - array of ColumnMetadata type
     * @param options - SQLServerBulkJdbcOptions with url for the connection
     */
