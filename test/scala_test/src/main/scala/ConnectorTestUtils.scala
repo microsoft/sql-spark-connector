@@ -318,6 +318,11 @@ class Connector_TestUtils(spark:SparkSession,
         runWithReliableConnector = flag
     }
 
+    // Empty the metadata of column schema (metadata is generated while reading with jdbc connector)
+    def emptyDfColsSchemaMetadata(schema:StructType) : StructType = {
+        StructType(schema.map(_.copy(metadata = Metadata.empty)))
+    }
+
     object dfTableUtility {
         val table_cols = List (
             ("RecordTime", IntegerType, "int", true),
