@@ -11,11 +11,12 @@ This library contains the source code for the Apache Spark Connector for SQL Ser
 
 There are three version sets of the connector available through Maven, a 2.4.x, a 3.0.x and a 3.1.x compatible version. All versions can be found [here](https://search.maven.org/search?q=spark-mssql-connector) and can be imported using the coordinates below:
 
-| Connector | Maven Coordinate | Scala Version |
-| --------- | ---------------- | ------------- |
-| Spark 2.4.x compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.2` | 2.11 |
-| Spark 3.0.x compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12 |
-| Spark 3.1.x compatible connnector | `com.microsoft.azure:spark-mssql-connector_2.12:1.2.0` | 2.12 |
+| Connector                        | Maven Coordinate                                       | Scala Version |
+|----------------------------------|--------------------------------------------------------|---------------|
+| Spark 2.4.x compatible connector | `com.microsoft.azure:spark-mssql-connector:1.0.2`      | 2.11          |
+| Spark 3.0.x compatible connector | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12          |
+| Spark 3.1.x compatible connector | `com.microsoft.azure:spark-mssql-connector_2.12:1.2.0` | 2.12          |
+| Spark 3.3.x compatible connector | `com.microsoft.azure:spark-mssql-connector_2.12:1.3.0` | 2.12          |
 
 ## Current Releases
 
@@ -35,13 +36,13 @@ For main changes from previous releases and known issues please refer to [CHANGE
 * Reliable connector support for Sql Server Single Instance
 
 
-| Component | Versions Supported |
-| --------- | ------------------ |
-| Apache Spark | 2.4.x, 3.0.x, 3.1.x |
-| Scala | 2.11, 2.12 |
-| Microsoft JDBC Driver for SQL Server | 8.4.1 |
-| Microsoft SQL Server | SQL Server 2008 or later |
-| Azure SQL Databases | Supported |
+| Component                            | Versions Supported         |
+|--------------------------------------|----------------------------|
+| Apache Spark                         | 2.4.x, 3.0.x, 3.1.x, 3.3.x |
+| Scala                                | 2.11, 2.12                 |
+| Microsoft JDBC Driver for SQL Server | 8.4.1                      |
+| Microsoft SQL Server                 | SQL Server 2008 or later   |
+| Azure SQL Databases                  | Supported                  |
 
 *Note: Azure Synapse (Azure SQL DW) use is not tested with this connector. While it may work, there may be unintended consequences.*
 
