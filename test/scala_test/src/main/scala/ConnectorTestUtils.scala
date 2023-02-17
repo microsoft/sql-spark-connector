@@ -318,6 +318,13 @@ class Connector_TestUtils(spark:SparkSession,
         runWithReliableConnector = flag
     }
 
+    // The new spark jdbc reads automatically fill metadata field
+    // This method empty the metadata of column schema and do the comparison
+    def compareSchemaIgnoreColsMetadata(df_schema:StructType, result_schema:StructType) : Boolean = {
+        val result_schema_cleaned = StructType(result_schema.map(_.copy(metadata = Metadata.empty)))
+        df_schema == result_schema_cleaned
+    }
+
     object dfTableUtility {
         val table_cols = List (
             ("RecordTime", IntegerType, "int", true),
