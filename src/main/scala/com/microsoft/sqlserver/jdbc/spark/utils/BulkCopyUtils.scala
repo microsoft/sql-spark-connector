@@ -13,15 +13,15 @@
 */
 package com.microsoft.sqlserver.jdbc.spark
 
-import java.sql.{Connection, ResultSet, ResultSetMetaData, SQLException}
-
-import org.apache.spark.internal.Logging
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
-import org.apache.spark.sql.types.{ByteType, DataType, ShortType, StructType}
-import org.apache.spark.sql.jdbc.JdbcDialects
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{createConnectionFactory, getSchema, schemaString}
+import com.microsoft.sqlserver.jdbc.spark.utils.JdbcUtils.createConnection
 import com.microsoft.sqlserver.jdbc.{SQLServerBulkCopy, SQLServerBulkCopyOptions}
+import org.apache.spark.internal.Logging
+import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.{getSchema, schemaString}
+import org.apache.spark.sql.jdbc.JdbcDialects
+import org.apache.spark.sql.types.{ByteType, ShortType}
+import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 
+import java.sql.{Connection, ResultSet, ResultSetMetaData, SQLException}
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -35,7 +35,7 @@ object BulkCopyUtils extends Logging {
     * a connection, sets connection properties and does a BulkWrite. Called when writing data to 
     * master instance and data pools both. URL in options is used to create the relevant connection.
     *
-    * @param itertor - iterator for row of the partition.
+    * @param iterator - iterator for row of the partition.
     * @param dfColMetadata - array of ColumnMetadata type
     * @param options - SQLServerBulkJdbcOptions with url for the connection
     */
@@ -47,7 +47,7 @@ object BulkCopyUtils extends Logging {
         options: SQLServerBulkJdbcOptions ): Unit = {
 
         logDebug("savePartition:Entered")
-        val conn = createConnectionFactory(options)()
+        val conn = createConnection(options)
         conn.setAutoCommit(false)
         conn.setTransactionIsolation(options.isolationLevel)
         var committed = false
