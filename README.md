@@ -17,6 +17,7 @@ There are three version sets of the connector available through Maven, a 2.4.x, 
 | Spark 3.0.x compatible connector | `com.microsoft.azure:spark-mssql-connector_2.12:1.1.0` | 2.12          |
 | Spark 3.1.x compatible connector | `com.microsoft.azure:spark-mssql-connector_2.12:1.2.0` | 2.12          |
 | Spark 3.3.x compatible connector | `com.microsoft.azure:spark-mssql-connector_2.12:1.3.0` | 2.12          |
+| Spark 3.4.x compatible connector | `com.microsoft.azure:spark-mssql-connector_2.12:1.4.0` | 2.12          |
 
 ## Current Releases
 
