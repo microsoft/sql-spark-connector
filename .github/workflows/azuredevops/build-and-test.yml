@@ -1,0 +1,44 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+  - master
+
+stages:
+  - stage: BuildAndTest
+    jobs:
+      - job: BuildAndTestWithDocker
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: DockerCompose@0
+            displayName: Docker compose up
+            inputs:
+              action: Run a Docker Compose command
+              dockerComposeFile: docker-compose.yml
+              projectName: sql-spark-connector
+              qualifyImageNames: true
+              dockerComposeCommand: up -d
+
+          - task: Maven@3
+            displayName: Maven build and test
+            inputs:
+              mavenPomFile: 'pom.xml'
+              mavenOptions: '-Xmx3072m'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.8'
+              jdkArchitectureOption: 'x64'
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+              goals: 'test'
+
+          - task: DockerCompose@0
+            displayName: Docker compose down
+            inputs:
+              action: Run a Docker Compose command
+              dockerComposeFile: docker-compose.yml
+              projectName: sql-spark-connector
+              qualifyImageNames: true
+              dockerComposeCommand: down
