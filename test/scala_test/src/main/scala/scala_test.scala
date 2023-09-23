@@ -135,7 +135,6 @@ object SparkConnTestMain {
                 method.invoke(test_obj)
             }
         }
-        test_obj.spark.sparkContext.stop()
     }
 }
 
