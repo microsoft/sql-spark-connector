@@ -104,6 +104,15 @@ connectionProperties = {
 
 For more information and explanation, visit the closed [issue](https://github.com/microsoft/sql-spark-connector/issues/26).
 
+### datetime2(0) will result in com.microsoft.sqlserver.jdbc.SQLServerException: The connection is closed
+
+This issue arises from Spark not supporting datetime2.
+For more information see details in closed [issue](https://github.com/microsoft/sql-spark-connector/issues/39) and [issue] (https://github.com/microsoft/sql-spark-connector/issues/83).
+
+For datetime2(0) you need to workarround and change your SQL table structure to a datetime2(x) where x>0.
+
+This will only resolve when the Spark pull request (https://github.com/apache/spark/pull/32655) is incorporated in your Spark environment.
+
 ## Get Started
 
 The Apache Spark Connector for SQL Server and Azure SQL is based on the Spark DataSourceV1 API and SQL Server Bulk API and uses the same interface as the built-in JDBC Spark-SQL connector. This allows you to easily integrate the connector and migrate your existing Spark jobs by simply updating the format parameter with `com.microsoft.sqlserver.jdbc.spark`.
